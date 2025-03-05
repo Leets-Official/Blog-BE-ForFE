@@ -36,7 +36,7 @@ public class Post {
     private String content;
 
     @Column(length = 255)
-    private String photo;
+    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
