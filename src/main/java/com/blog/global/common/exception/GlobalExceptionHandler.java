@@ -1,6 +1,6 @@
-package com.blog.common.exception;
+package com.blog.global.common.exception;
 
-import com.yoyomo.global.common.dto.ResponseDto;
+import com.blog.global.common.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.blog.common.exception;
+package com.blog.global.common.exception;
 
 public record ExceptionDTO(
         String requestURL,
