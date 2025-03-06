@@ -4,6 +4,7 @@ import com.blog.domain.board.application.dto.PostCreateDto;
 import com.blog.domain.board.application.dto.PostReadResponse;
 import com.blog.domain.board.application.dto.PostUpdateDto;
 import com.blog.domain.board.domain.entity.Post;
+import com.blog.domain.board.domain.service.PostDeleteService;
 import com.blog.domain.board.domain.service.PostGetService;
 import com.blog.domain.board.domain.service.PostSaveService;
 import com.blog.domain.board.domain.service.PostUpdateService;
@@ -24,6 +25,7 @@ public class PostManageUsecase {
     private final PostGetService postGetService;
     private final PostUpdateService postUpdateService;
     private final PostValidateService postValidateService;
+    private final PostDeleteService postDeleteService;
 
     @Transactional
     public void createPost(Long userId, PostCreateDto dto) {
@@ -58,5 +60,15 @@ public class PostManageUsecase {
         postValidateService.certificate(post,user);
 
         postUpdateService.update(post,dto);
+    }
+
+    @Transactional
+    public void deletePost(Long userId, UUID postId) {
+        User user = userGetService.find(userId);
+        Post post = postGetService.find(postId);
+
+        postValidateService.certificate(post,user);
+
+        postDeleteService.delete(post);
     }
 }
