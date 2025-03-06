@@ -1,6 +1,7 @@
 package com.blog.domain.board.application.dto;
 
 import com.blog.domain.board.domain.entity.Post;
+import com.blog.domain.user.domain.entity.User;
 import java.util.UUID;
 import lombok.Builder;
 
@@ -12,13 +13,13 @@ public record PostReadResponse(
         String image,
         Boolean isOwner
 ) {
-    public static PostReadResponse toResponse(Post post, Boolean isOwner) {
+    public static PostReadResponse toResponse(Post post, User user) {
         return PostReadResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .image(post.getImage())
-                .isOwner(isOwner)
+                .isOwner(post.getUser().equals(user))
                 .build();
     }
 }
