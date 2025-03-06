@@ -39,4 +39,12 @@ public class Comment {
     @NotBlank
     private String content;
 
+    public static Comment of(String content, Post post, User user) {
+        return Comment.builder()
+                .content(content)
+                .post(post)
+                .user(user)
+                .build();
+    }
+
 }
