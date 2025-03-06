@@ -2,6 +2,7 @@ package com.blog.domain.comment.presentation;
 
 
 import static com.blog.domain.comment.presentation.constant.ResponseMessage.CREATE_SUCCESS;
+import static com.blog.domain.comment.presentation.constant.ResponseMessage.DELETE_SUCCESS;
 import static com.blog.domain.comment.presentation.constant.ResponseMessage.UPDATE_SUCCESS;
 
 import com.blog.domain.comment.application.dto.CommentCreateDto;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,5 +44,12 @@ public class CommentController {
                                     @RequestBody CommentUpdateDto dto) {
         commentManageUsecase.updateComment(userId, commentId, dto);
         return ResponseDto.of(HttpStatus.CREATED.value(), UPDATE_SUCCESS.getMessage());
+    }
+
+    @DeleteMapping("{commentId}")
+    @Operation(summary = "댓글 삭제")
+    public ResponseDto<Void> delete(@RequestHeader Long userId, @PathVariable Long commentId) {
+        commentManageUsecase.deleteComment(userId, commentId);
+        return ResponseDto.of(HttpStatus.CREATED.value(), DELETE_SUCCESS.getMessage());
     }
 }

@@ -5,6 +5,7 @@ import com.blog.domain.board.domain.service.PostGetService;
 import com.blog.domain.comment.application.dto.CommentCreateDto;
 import com.blog.domain.comment.application.dto.CommentUpdateDto;
 import com.blog.domain.comment.domain.entity.Comment;
+import com.blog.domain.comment.domain.service.CommentDeleteService;
 import com.blog.domain.comment.domain.service.CommentGetService;
 import com.blog.domain.comment.domain.service.CommentSaveService;
 import com.blog.domain.comment.domain.service.CommentUpdateService;
@@ -25,9 +26,10 @@ public class CommentManageUsecase {
     private final CommentGetService commentGetService;
     private final CommentValidateService commentValidateService;
     private final CommentUpdateService commentUpdateService;
+    private final CommentDeleteService commentDeleteService;
 
     @Transactional
-    public void createComment(Long userId,UUID postId, CommentCreateDto dto) {
+    public void createComment(Long userId, UUID postId, CommentCreateDto dto) {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
         Comment comment = Comment.of(dto.content(), post, user);
@@ -42,6 +44,16 @@ public class CommentManageUsecase {
 
         commentValidateService.certificate(comment, user);
 
-        commentUpdateService.update(comment,dto);
+        commentUpdateService.update(comment, dto);
+    }
+
+    @Transactional
+    public void deleteComment(Long userId, Long commentId) {
+        User user = userGetService.find(userId);
+        Comment comment = commentGetService.find(commentId);
+
+        commentValidateService.certificate(comment, user);
+
+        commentDeleteService.delete(comment);
     }
 }
