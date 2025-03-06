@@ -2,9 +2,11 @@ package com.blog.domain.board.presentation;
 
 import static com.blog.domain.board.presentation.constant.ResponseMessage.CREATE_SUCCESS;
 import static com.blog.domain.board.presentation.constant.ResponseMessage.READ_SUCCESS;
+import static com.blog.domain.board.presentation.constant.ResponseMessage.UPDATE_SUCCESS;
 
 import com.blog.domain.board.application.dto.PostCreateDto;
 import com.blog.domain.board.application.dto.PostReadResponse;
+import com.blog.domain.board.application.dto.PostUpdateDto;
 import com.blog.domain.board.application.usecase.PostManageUsecase;
 import com.blog.global.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -38,7 +41,7 @@ public class PostController {
 
     @GetMapping
     @Operation(summary = "게시물 조회")
-    public ResponseDto<PostReadResponse> read(@RequestHeader Long userId, @RequestHeader UUID postId) {
+    public ResponseDto<PostReadResponse> read(@RequestHeader Long userId, @RequestParam UUID postId) {
         PostReadResponse response = postManageUsecase.readPost(userId, postId);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
@@ -48,5 +51,12 @@ public class PostController {
     public ResponseDto<List<PostReadResponse>> readAll(@RequestHeader Long userId, @RequestParam int size, @RequestParam int page) {
         List<PostReadResponse> response = postManageUsecase.readAllPost(userId, size, page);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
+    }
+
+    @PatchMapping()
+    @Operation(summary = "게시물 업데이트")
+    public ResponseDto<Void> update(@RequestHeader Long userId, @RequestParam UUID postId, @RequestBody PostUpdateDto dto) {
+        postManageUsecase.updatePost(userId, postId, dto);
+        return ResponseDto.of(HttpStatus.OK.value(), UPDATE_SUCCESS.getMessage());
     }
 }
