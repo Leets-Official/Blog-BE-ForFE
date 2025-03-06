@@ -5,9 +5,9 @@ import com.blog.domain.board.application.dto.PostReadResponse;
 import com.blog.domain.board.domain.entity.Post;
 import com.blog.domain.board.domain.service.PostGetService;
 import com.blog.domain.board.domain.service.PostSaveService;
-import com.blog.domain.board.domain.service.PostValidateService;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserGetService;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,6 @@ public class PostManageUsecase {
     private final UserGetService userGetService;
     private final PostSaveService postSaveService;
     private final PostGetService postGetService;
-    private final PostValidateService postValidateService;
 
     @Transactional
     public void createPost(Long userId, PostCreateDto dto) {
@@ -34,8 +33,15 @@ public class PostManageUsecase {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
 
-        boolean isOwner = postValidateService.certificate(post,user);
+        return PostReadResponse.toResponse(post, user);
+    }
 
-        return PostReadResponse.toResponse(post, isOwner);
+    @Transactional(readOnly = true)
+    public List<PostReadResponse> readAllPost(Long userId, int size, int page) {
+        User user = userGetService.find(userId);
+        List<Post> posts = postGetService.findAll(size, page);
+
+        return posts.stream()
+                .map(post -> PostReadResponse.toResponse(post, user)).toList();
     }
 }
