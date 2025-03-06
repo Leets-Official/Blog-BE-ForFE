@@ -11,16 +11,20 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "boards")
+@Getter
+@Table(name = "posts")
 public class Post {
 
     @Id
@@ -36,9 +40,29 @@ public class Post {
     private String content;
 
     @Column(length = 255)
-    private String photo;
+    private String image;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+
+    public static Post CreatePost(String title, String content, String image, User user) {
+        return Post.builder().
+                title(title).
+                content(content).
+                image(image).
+                user(user).
+                build();
+    }
+
+    public void update(String title, String content, String image) {
+        this.title = title;
+        this.content = content;
+        this.image = image;
+    }
 }
