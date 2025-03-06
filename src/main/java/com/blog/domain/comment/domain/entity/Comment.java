@@ -14,12 +14,14 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Table(name = "comments")
 public class Comment {
 
@@ -28,8 +30,8 @@ public class Comment {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "board_id", nullable = false)
-    private Post board;
+    @JoinColumn(name = "post_id", nullable = false)
+    private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -38,5 +40,17 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "TEXT")
     @NotBlank
     private String content;
+
+    public static Comment of(String content, Post post, User user) {
+        return Comment.builder()
+                .content(content)
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 
 }

@@ -6,6 +6,7 @@ import static com.blog.domain.board.presentation.constant.ResponseMessage.READ_S
 import static com.blog.domain.board.presentation.constant.ResponseMessage.UPDATE_SUCCESS;
 
 import com.blog.domain.board.application.dto.PostCreateDto;
+import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
 import com.blog.domain.board.application.dto.PostUpdateDto;
 import com.blog.domain.board.application.usecase.PostManageUsecase;
@@ -50,8 +51,8 @@ public class PostController {
 
     @GetMapping("/all")
     @Operation(summary = "게시물 리스트 조회")
-    public ResponseDto<List<PostReadResponse>> readAll(@RequestHeader Long userId, @RequestParam int size, @RequestParam int page) {
-        List<PostReadResponse> response = postManageUsecase.readAllPost(userId, size, page);
+    public ResponseDto<List<PostReadAllResponse>> readAll(@RequestHeader Long userId, @RequestParam int size, @RequestParam int page) {
+        List<PostReadAllResponse> response = postManageUsecase.readAllPost(userId, size, page);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
 
