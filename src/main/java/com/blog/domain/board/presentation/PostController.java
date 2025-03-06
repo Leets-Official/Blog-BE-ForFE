@@ -1,6 +1,7 @@
 package com.blog.domain.board.presentation;
 
 import static com.blog.domain.board.presentation.constant.ResponseMessage.CREATE_SUCCESS;
+import static com.blog.domain.board.presentation.constant.ResponseMessage.DELETE_SUCCESS;
 import static com.blog.domain.board.presentation.constant.ResponseMessage.READ_SUCCESS;
 import static com.blog.domain.board.presentation.constant.ResponseMessage.UPDATE_SUCCESS;
 
@@ -16,6 +17,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,5 +60,12 @@ public class PostController {
     public ResponseDto<Void> update(@RequestHeader Long userId, @RequestParam UUID postId, @RequestBody PostUpdateDto dto) {
         postManageUsecase.updatePost(userId, postId, dto);
         return ResponseDto.of(HttpStatus.OK.value(), UPDATE_SUCCESS.getMessage());
+    }
+
+    @DeleteMapping()
+    @Operation(summary = "게시물 삭제")
+    public ResponseDto<Void> delete(@RequestHeader Long userId, @RequestParam UUID postId) {
+        postManageUsecase.deletePost(userId, postId);
+        return ResponseDto.of(HttpStatus.OK.value(), DELETE_SUCCESS.getMessage());
     }
 }
