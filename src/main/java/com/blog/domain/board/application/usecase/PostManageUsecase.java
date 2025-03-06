@@ -11,6 +11,7 @@ import com.blog.domain.board.domain.service.PostSaveService;
 import com.blog.domain.board.domain.service.PostUpdateService;
 import com.blog.domain.board.domain.service.PostValidateService;
 import com.blog.domain.comment.domain.entity.Comment;
+import com.blog.domain.comment.domain.service.CommentDeleteService;
 import com.blog.domain.comment.domain.service.CommentGetService;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserGetService;
@@ -30,6 +31,7 @@ public class PostManageUsecase {
     private final PostValidateService postValidateService;
     private final PostDeleteService postDeleteService;
     private final CommentGetService commentGetService;
+    private final CommentDeleteService commentDeleteService;
 
     @Transactional
     public void createPost(Long userId, PostCreateDto dto) {
@@ -40,7 +42,7 @@ public class PostManageUsecase {
     }
 
     @Transactional(readOnly = true)
-    public PostReadResponse readPost(Long userId , UUID postId) {
+    public PostReadResponse readPost(Long userId, UUID postId) {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
 
@@ -63,9 +65,9 @@ public class PostManageUsecase {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
 
-        postValidateService.certificate(post,user);
+        postValidateService.certificate(post, user);
 
-        postUpdateService.update(post,dto);
+        postUpdateService.update(post, dto);
     }
 
     @Transactional
@@ -73,8 +75,9 @@ public class PostManageUsecase {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
 
-        postValidateService.certificate(post,user);
+        postValidateService.certificate(post, user);
 
+        commentDeleteService.deleteAll(post);
         postDeleteService.delete(post);
     }
 }
