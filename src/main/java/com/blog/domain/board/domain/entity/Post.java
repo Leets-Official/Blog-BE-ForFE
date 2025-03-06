@@ -59,4 +59,10 @@ public class Post {
                 user(user).
                 build();
     }
+
+    public void update(String title, String content, String image) {
+        this.title = title;
+        this.content = content;
+        this.image = image;
+    }
 }
