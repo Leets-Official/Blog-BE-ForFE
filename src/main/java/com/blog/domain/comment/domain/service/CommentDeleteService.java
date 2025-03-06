@@ -1,5 +1,6 @@
 package com.blog.domain.comment.domain.service;
 
+import com.blog.domain.board.domain.entity.Post;
 import com.blog.domain.comment.domain.entity.Comment;
 import com.blog.domain.comment.domain.repository.CommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,5 +13,9 @@ public class CommentDeleteService {
 
     public void delete(Comment comment) {
         commentRepository.delete(comment);
+    }
+
+    public void deleteAll(Post post) {
+        commentRepository.deleteAllByPost(post);
     }
 }
