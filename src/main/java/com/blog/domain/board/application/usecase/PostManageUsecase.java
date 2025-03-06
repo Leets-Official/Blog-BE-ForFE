@@ -1,6 +1,7 @@
 package com.blog.domain.board.application.usecase;
 
 import com.blog.domain.board.application.dto.PostCreateDto;
+import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
 import com.blog.domain.board.application.dto.PostUpdateDto;
 import com.blog.domain.board.domain.entity.Post;
@@ -9,6 +10,8 @@ import com.blog.domain.board.domain.service.PostGetService;
 import com.blog.domain.board.domain.service.PostSaveService;
 import com.blog.domain.board.domain.service.PostUpdateService;
 import com.blog.domain.board.domain.service.PostValidateService;
+import com.blog.domain.comment.domain.entity.Comment;
+import com.blog.domain.comment.domain.service.CommentGetService;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserGetService;
 import java.util.List;
@@ -26,6 +29,7 @@ public class PostManageUsecase {
     private final PostUpdateService postUpdateService;
     private final PostValidateService postValidateService;
     private final PostDeleteService postDeleteService;
+    private final CommentGetService commentGetService;
 
     @Transactional
     public void createPost(Long userId, PostCreateDto dto) {
@@ -40,16 +44,18 @@ public class PostManageUsecase {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
 
-        return PostReadResponse.toResponse(post, user);
+        List<Comment> comments = commentGetService.findALlByPost(post);
+
+        return PostReadResponse.toResponse(post, user, comments);
     }
 
     @Transactional(readOnly = true)
-    public List<PostReadResponse> readAllPost(Long userId, int size, int page) {
+    public List<PostReadAllResponse> readAllPost(Long userId, int size, int page) {
         User user = userGetService.find(userId);
         List<Post> posts = postGetService.findAll(size, page);
 
         return posts.stream()
-                .map(post -> PostReadResponse.toResponse(post, user)).toList();
+                .map(post -> PostReadAllResponse.toResponse(post, user)).toList();
     }
 
     @Transactional
