@@ -41,4 +41,13 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    public static Post CreatePost(String title, String content, String image, User user) {
+        return Post.builder().
+                title(title).
+                content(content).
+                image(image).
+                user(user).
+                build();
+    }
 }
