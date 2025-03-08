@@ -3,6 +3,7 @@ package com.blog.domain.user.presentation;
 import com.blog.domain.user.application.dto.request.NicknamePatchRequest;
 import com.blog.domain.user.application.dto.request.PasswordPatchRequest;
 import com.blog.domain.user.application.dto.request.ProfilePicturePatchRequest;
+import com.blog.domain.user.application.dto.response.UserGetResponse;
 import com.blog.domain.user.domain.service.UserGetService;
 import com.blog.domain.user.domain.service.UserService;
 import com.blog.domain.user.presentation.constant.ResponseMessage;
@@ -12,6 +13,7 @@ import com.blog.global.common.dto.ResponseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,5 +54,11 @@ public class UserController {
     this.userService.updatePassword(request.password());
 
     return ResponseDto.of(HttpStatus.OK.value(), ResponseMessage.PASSWORD_UPDATED.getMessage());
+  }
+
+  @GetMapping("/me")
+  @UseGuards({MemberGuard.class})
+  public ResponseDto<UserGetResponse> getMe() {
+    return ResponseDto.of(HttpStatus.OK.value(), ResponseMessage.FOUND_MY_INFO_SUCCESS.getMessage(), this.userService.getMyInfo());
   }
 }

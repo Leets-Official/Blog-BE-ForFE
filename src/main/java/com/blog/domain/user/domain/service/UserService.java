@@ -1,5 +1,6 @@
 package com.blog.domain.user.domain.service;
 
+import com.blog.domain.user.application.dto.response.UserGetResponse;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.repository.UserRepository;
 import com.blog.domain.user.exception.UserNotFoundException;
@@ -80,5 +81,11 @@ public class UserService {
     User user = this.findById(member.id());
 
     user.setPassword(this.hashPassword(password));
+  }
+
+  public UserGetResponse getMyInfo() {
+    TokenMemberInfo member = MemberContext.getMember();
+
+    return UserGetResponse.from(this.findById(member.id()));
   }
 }
