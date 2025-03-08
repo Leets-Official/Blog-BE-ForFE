@@ -1,5 +1,6 @@
 package com.blog.domain.user.domain.entity;
 
+import com.blog.domain.auth.dto.requests.RegisterPostRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,21 +25,24 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 10, nullable = false)
-    private String name;
-
-    @Column(name = "birth_date", nullable = false)
-    private LocalDate birthDate;
-
-    @Column(length = 20, nullable = false)
+    @Column(length = 20, nullable = false, unique = true)
     private String nickname;
 
     @Column(name = "profile_picture", length = 255)
     private String profilePicture;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    public static User create(RegisterPostRequest request, String encodedPassword) {
+        return User.builder()
+            .nickname(request.nickname())
+            .profilePicture(request.profilePicture())
+            .email(request.email())
+            .password(encodedPassword)
+            .build();
+    }
 }
