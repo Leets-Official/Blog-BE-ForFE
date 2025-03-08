@@ -3,6 +3,8 @@ package com.blog.domain.user.domain.service;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.repository.UserRepository;
 import com.blog.domain.user.exception.UserNotFoundException;
+import com.blog.global.common.auth.MemberContext;
+import com.blog.global.common.auth.TokenMemberInfo;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class UserService {
 
   private final UserRepository userRepository;
@@ -52,7 +53,32 @@ public class UserService {
     return this.bCryptPasswordEncoder.encode(password);
   }
 
+  @Transactional
   public User save(User user) {
     return this.userRepository.save(user);
+  }
+
+  @Transactional
+  public void updatePicture(String picture) {
+    TokenMemberInfo member = MemberContext.getMember();
+    User user = this.findById(member.id());
+
+    user.setProfilePicture(picture);
+  }
+
+  @Transactional
+  public void updateNickname(String nickname) {
+    TokenMemberInfo member = MemberContext.getMember();
+    User user = this.findById(member.id());
+
+    user.setNickname(nickname);
+  }
+
+  @Transactional
+  public void updatePassword(String password) {
+    TokenMemberInfo member = MemberContext.getMember();
+    User user = this.findById(member.id());
+
+    user.setPassword(this.hashPassword(password));
   }
 }

@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
@@ -26,15 +27,18 @@ public class User {
     private Long id;
 
     @Column(length = 20, nullable = false, unique = true)
+    @Setter
     private String nickname;
 
     @Column(name = "profile_picture", length = 255)
+    @Setter
     private String profilePicture;
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
     @Column(nullable = false)
+    @Setter
     private String password;
 
     public static User create(RegisterPostRequest request, String encodedPassword) {
