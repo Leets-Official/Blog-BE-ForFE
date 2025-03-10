@@ -8,6 +8,9 @@ import static com.blog.domain.comment.presentation.constant.ResponseMessage.UPDA
 import com.blog.domain.comment.application.dto.CommentCreateDto;
 import com.blog.domain.comment.application.dto.CommentUpdateDto;
 import com.blog.domain.comment.application.usecase.CommentManageUsecase;
+import com.blog.global.common.auth.MemberContext;
+import com.blog.global.common.auth.annotations.UseGuards;
+import com.blog.global.common.auth.guards.MemberGuard;
 import com.blog.global.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,24 +35,27 @@ public class CommentController {
 
     @PostMapping("{postId}")
     @Operation(summary = "댓글 작성")
-    public ResponseDto<Void> create(@RequestHeader Long userId, @PathVariable UUID postId,
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<Void> create(@PathVariable UUID postId,
                                     @RequestBody CommentCreateDto dto) {
-        commentManageUsecase.createComment(userId, postId, dto);
+        commentManageUsecase.createComment(MemberContext.getMember().id(), postId, dto);
         return ResponseDto.of(HttpStatus.CREATED.value(), CREATE_SUCCESS.getMessage());
     }
 
     @PatchMapping("{commentId}")
     @Operation(summary = "댓글 수정")
-    public ResponseDto<Void> update(@RequestHeader Long userId, @PathVariable Long commentId,
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<Void> update(@PathVariable Long commentId,
                                     @RequestBody CommentUpdateDto dto) {
-        commentManageUsecase.updateComment(userId, commentId, dto);
+        commentManageUsecase.updateComment(MemberContext.getMember().id(), commentId, dto);
         return ResponseDto.of(HttpStatus.CREATED.value(), UPDATE_SUCCESS.getMessage());
     }
 
     @DeleteMapping("{commentId}")
     @Operation(summary = "댓글 삭제")
-    public ResponseDto<Void> delete(@RequestHeader Long userId, @PathVariable Long commentId) {
-        commentManageUsecase.deleteComment(userId, commentId);
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<Void> delete(@PathVariable Long commentId) {
+        commentManageUsecase.deleteComment(MemberContext.getMember().id(), commentId);
         return ResponseDto.of(HttpStatus.CREATED.value(), DELETE_SUCCESS.getMessage());
     }
 }
