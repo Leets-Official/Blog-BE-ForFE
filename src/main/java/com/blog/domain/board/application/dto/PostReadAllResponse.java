@@ -1,18 +1,22 @@
 package com.blog.domain.board.application.dto;
 
 import com.blog.domain.board.domain.entity.Post;
-import com.blog.domain.comment.application.dto.CommentGetDto;
 import com.blog.domain.user.domain.entity.User;
-import java.util.List;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.UUID;
 import lombok.Builder;
 
 @Builder
 public record PostReadAllResponse(
+        @Schema(description = "게시글 id", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
         UUID postId,
+        @Schema(description = "게시글 제목", example = "게시글 제목")
         String title,
+        @Schema(description = "게시글 내용", example = "게시글 내용")
         String content,
+        @Schema(description = "게시글 이미지", example = "s3 이미지 주소")
         String image,
+        @Schema(description = "게시글 이미지", example = "true")
         Boolean isOwner
 ) {
     public static PostReadAllResponse toResponse(Post post, User user) {
