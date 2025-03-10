@@ -46,7 +46,7 @@ public class PostController {
         return ResponseDto.of(HttpStatus.CREATED.value(), CREATE_SUCCESS.getMessage());
     }
 
-    @GetMapping
+    @GetMapping("/token")
     @Operation(summary = "게시물 조회")
     @UseGuards({MemberGuard.class})
     public ResponseDto<PostReadResponse> read(@Parameter(description = "조회할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
@@ -54,13 +54,30 @@ public class PostController {
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
 
-    @GetMapping("/all")
+    @GetMapping()
+    @Operation(summary = "토큰 없이 게시물 조회")
+    public ResponseDto<PostReadResponse> readNoToken(
+            @Parameter(description = "조회할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
+        PostReadResponse response = postManageUsecase.readPostNoToken(postId);
+        return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
+    }
+
+    @GetMapping("/all/token")
     @Operation(summary = "게시물 리스트 조회")
     @UseGuards({MemberGuard.class})
     public ResponseDto<List<PostReadAllResponse>> readAll(@Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size,
                                                           @Parameter(description = "조회할 페이지 번호", example = "1") @RequestParam int page) {
         List<PostReadAllResponse> response = postManageUsecase.readAllPost(MemberContext.getMember()
             .id(), size, page);
+        return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
+    }
+
+    @GetMapping("/all")
+    @Operation(summary = "게시물 리스트 조회")
+    public ResponseDto<List<PostReadAllResponse>> readAllNoToken(
+            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size,
+            @Parameter(description = "조회할 페이지 번호", example = "1") @RequestParam int page) {
+        List<PostReadAllResponse> response = postManageUsecase.readAllPostNoToken(size, page);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
 

@@ -52,12 +52,28 @@ public class PostManageUsecase {
     }
 
     @Transactional(readOnly = true)
+    public PostReadResponse readPostNoToken(UUID postId) {
+        Post post = postGetService.find(postId);
+        List<Comment> comments = commentGetService.findALlByPost(post);
+
+        return PostReadResponse.toResponse(post, null, comments);
+    }
+
+    @Transactional(readOnly = true)
     public List<PostReadAllResponse> readAllPost(Long userId, int size, int page) {
         User user = userGetService.find(userId);
         List<Post> posts = postGetService.findAll(size, page);
 
         return posts.stream()
                 .map(post -> PostReadAllResponse.toResponse(post, user)).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostReadAllResponse> readAllPostNoToken(int size, int page) {
+        List<Post> posts = postGetService.findAll(size, page);
+
+        return posts.stream()
+                .map(post -> PostReadAllResponse.toResponse(post, null)).toList();
     }
 
     @Transactional

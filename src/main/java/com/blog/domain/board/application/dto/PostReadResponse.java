@@ -36,7 +36,7 @@ public record PostReadResponse(
                 .title(post.getTitle())
                 .content(post.getContent())
                 .image(post.getImage())
-                .isOwner(post.getUser().equals(user))
+                .isOwner(user != null && post.getUser().equals(user))
                 .comments(dtos)
                 .build();
     }
