@@ -10,6 +10,9 @@ import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
 import com.blog.domain.board.application.dto.PostUpdateDto;
 import com.blog.domain.board.application.usecase.PostManageUsecase;
+import com.blog.global.common.auth.MemberContext;
+import com.blog.global.common.auth.annotations.UseGuards;
+import com.blog.global.common.auth.guards.MemberGuard;
 import com.blog.global.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -37,42 +40,44 @@ public class PostController {
 
     @PostMapping
     @Operation(summary = "게시물 생성")
-    public ResponseDto<Void> create(@RequestHeader Long userId, @RequestBody PostCreateDto dto) {
-        postManageUsecase.createPost(userId, dto);
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<Void> create(@RequestBody PostCreateDto dto) {
+        postManageUsecase.createPost(MemberContext.getMember().id(), dto);
         return ResponseDto.of(HttpStatus.CREATED.value(), CREATE_SUCCESS.getMessage());
     }
 
     @GetMapping
     @Operation(summary = "게시물 조회")
-    public ResponseDto<PostReadResponse> read(@RequestHeader Long userId,
-                                              @Parameter(description = "조회할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
-        PostReadResponse response = postManageUsecase.readPost(userId, postId);
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<PostReadResponse> read(@Parameter(description = "조회할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
+        PostReadResponse response = postManageUsecase.readPost(MemberContext.getMember().id(), postId);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
 
     @GetMapping("/all")
     @Operation(summary = "게시물 리스트 조회")
-    public ResponseDto<List<PostReadAllResponse>> readAll(@RequestHeader Long userId,
-                                                          @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size,
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<List<PostReadAllResponse>> readAll(@Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size,
                                                           @Parameter(description = "조회할 페이지 번호", example = "1") @RequestParam int page) {
-        List<PostReadAllResponse> response = postManageUsecase.readAllPost(userId, size, page);
+        List<PostReadAllResponse> response = postManageUsecase.readAllPost(MemberContext.getMember()
+            .id(), size, page);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
 
     @PatchMapping()
     @Operation(summary = "게시물 업데이트")
-    public ResponseDto<Void> update(@RequestHeader Long userId,
-                                    @Parameter(description = "수정할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId,
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<Void> update(@Parameter(description = "수정할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId,
                                     @RequestBody PostUpdateDto dto) {
-        postManageUsecase.updatePost(userId, postId, dto);
+        postManageUsecase.updatePost(MemberContext.getMember().id(), postId, dto);
         return ResponseDto.of(HttpStatus.OK.value(), UPDATE_SUCCESS.getMessage());
     }
 
     @DeleteMapping()
     @Operation(summary = "게시물 삭제")
-    public ResponseDto<Void> delete(@RequestHeader Long userId,
-                                    @Parameter(description = "삭제할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
-        postManageUsecase.deletePost(userId, postId);
+    @UseGuards({MemberGuard.class})
+    public ResponseDto<Void> delete(@Parameter(description = "삭제할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
+        postManageUsecase.deletePost(MemberContext.getMember().id(), postId);
         return ResponseDto.of(HttpStatus.OK.value(), DELETE_SUCCESS.getMessage());
     }
 }
