@@ -22,7 +22,7 @@ public record PostReadResponse(
         @Schema(description = "게시글 소유 여부", example = "true")
         Boolean isOwner,
         @Schema(description = "댓글", example =
-                "[{\"content\": \"댓글 내용\", \"nickName\": \"닉네임"
+                "[{\"commentId\": 1,\"content\": \"댓글 내용\", \"nickName\": \"닉네임"
                         + "\", \"isOwner\": true}]")
         List<CommentGetDto> comments
 ) {

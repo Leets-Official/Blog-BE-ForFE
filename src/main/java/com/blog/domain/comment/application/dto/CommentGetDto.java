@@ -7,6 +7,8 @@ import lombok.Builder;
 
 @Builder
 public record CommentGetDto(
+        @Schema(description = "댓글 Id", example = "1")
+        long commentId,
         @Schema(description = "댓글 내용", example = "댓글 내용")
         String content,
         @Schema(description = "작성자 닉네임", example = "작성자 닉네임")
@@ -16,6 +18,7 @@ public record CommentGetDto(
 ) {
     public static CommentGetDto toResponse(Comment comment, User user) {
         return CommentGetDto.builder()
+                .commentId(comment.getId())
                 .content(comment.getContent())
                 .nickName(user.getNickname())
                 .isOwner(comment.getUser().equals(user))
