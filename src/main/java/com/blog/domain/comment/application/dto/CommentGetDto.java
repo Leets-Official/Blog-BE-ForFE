@@ -20,7 +20,7 @@ public record CommentGetDto(
         return CommentGetDto.builder()
                 .commentId(comment.getId())
                 .content(comment.getContent())
-                .nickName(user.getNickname())
+                .nickName(user == null ? null : user.getNickname())
                 .isOwner(comment.getUser().equals(user))
                 .build();
     }
