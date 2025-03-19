@@ -5,6 +5,7 @@ import com.blog.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
+@Schema(description = "댓글 DTO")
 @Builder
 public record CommentGetDto(
         @Schema(description = "댓글 Id", example = "1")
@@ -20,7 +21,7 @@ public record CommentGetDto(
         return CommentGetDto.builder()
                 .commentId(comment.getId())
                 .content(comment.getContent())
-                .nickName(user.getNickname())
+                .nickName(user == null ? null : user.getNickname())
                 .isOwner(comment.getUser().equals(user))
                 .build();
     }

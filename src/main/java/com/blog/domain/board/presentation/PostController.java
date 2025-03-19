@@ -5,10 +5,10 @@ import static com.blog.domain.board.presentation.constant.ResponseMessage.DELETE
 import static com.blog.domain.board.presentation.constant.ResponseMessage.READ_SUCCESS;
 import static com.blog.domain.board.presentation.constant.ResponseMessage.UPDATE_SUCCESS;
 
-import com.blog.domain.board.application.dto.PostCreateDto;
+import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
-import com.blog.domain.board.application.dto.PostUpdateDto;
+import com.blog.domain.board.application.dto.PostUpdateRequest;
 import com.blog.domain.board.application.usecase.PostManageUsecase;
 import com.blog.global.common.auth.MemberContext;
 import com.blog.global.common.auth.annotations.UseGuards;
@@ -17,6 +17,7 @@ import com.blog.global.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,7 +41,7 @@ public class PostController {
     @PostMapping
     @Operation(summary = "게시물 생성")
     @UseGuards({MemberGuard.class})
-    public ResponseDto<Void> create(@RequestBody PostCreateDto dto) {
+    public ResponseDto<Void> create(@Valid @RequestBody PostCreateRequest dto) {
         postManageUsecase.createPost(MemberContext.getMember().id(), dto);
         return ResponseDto.of(HttpStatus.CREATED.value(), CREATE_SUCCESS.getMessage());
     }
@@ -49,7 +49,8 @@ public class PostController {
     @GetMapping("/token")
     @Operation(summary = "게시물 조회")
     @UseGuards({MemberGuard.class})
-    public ResponseDto<PostReadResponse> read(@Parameter(description = "조회할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
+    public ResponseDto<PostReadResponse> read(
+            @Parameter(description = "조회할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
         PostReadResponse response = postManageUsecase.readPost(MemberContext.getMember().id(), postId);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
@@ -65,10 +66,11 @@ public class PostController {
     @GetMapping("/all/token")
     @Operation(summary = "게시물 리스트 조회")
     @UseGuards({MemberGuard.class})
-    public ResponseDto<List<PostReadAllResponse>> readAll(@Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size,
-                                                          @Parameter(description = "조회할 페이지 번호", example = "1") @RequestParam int page) {
+    public ResponseDto<List<PostReadAllResponse>> readAll(
+            @Parameter(description = "페이지당 항목 수", example = "10") @RequestParam int size,
+            @Parameter(description = "조회할 페이지 번호", example = "1") @RequestParam int page) {
         List<PostReadAllResponse> response = postManageUsecase.readAllPost(MemberContext.getMember()
-            .id(), size, page);
+                .id(), size, page);
         return ResponseDto.of(HttpStatus.OK.value(), READ_SUCCESS.getMessage(), response);
     }
 
@@ -84,8 +86,9 @@ public class PostController {
     @PatchMapping()
     @Operation(summary = "게시물 업데이트")
     @UseGuards({MemberGuard.class})
-    public ResponseDto<Void> update(@Parameter(description = "수정할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId,
-                                    @RequestBody PostUpdateDto dto) {
+    public ResponseDto<Void> update(
+            @Parameter(description = "수정할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId,
+            @Valid @RequestBody PostUpdateRequest dto) {
         postManageUsecase.updatePost(MemberContext.getMember().id(), postId, dto);
         return ResponseDto.of(HttpStatus.OK.value(), UPDATE_SUCCESS.getMessage());
     }
@@ -93,7 +96,8 @@ public class PostController {
     @DeleteMapping()
     @Operation(summary = "게시물 삭제")
     @UseGuards({MemberGuard.class})
-    public ResponseDto<Void> delete(@Parameter(description = "삭제할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
+    public ResponseDto<Void> delete(
+            @Parameter(description = "삭제할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId) {
         postManageUsecase.deletePost(MemberContext.getMember().id(), postId);
         return ResponseDto.of(HttpStatus.OK.value(), DELETE_SUCCESS.getMessage());
     }

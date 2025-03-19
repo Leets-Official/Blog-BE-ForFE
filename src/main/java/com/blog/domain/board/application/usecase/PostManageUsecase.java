@@ -1,10 +1,15 @@
 package com.blog.domain.board.application.usecase;
 
-import com.blog.domain.board.application.dto.PostCreateDto;
+import com.blog.domain.board.application.dto.ContentDto;
+import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
-import com.blog.domain.board.application.dto.PostUpdateDto;
+import com.blog.domain.board.application.dto.PostUpdateRequest;
+import com.blog.domain.board.domain.entity.Content;
 import com.blog.domain.board.domain.entity.Post;
+import com.blog.domain.board.domain.service.ContentDeleteService;
+import com.blog.domain.board.domain.service.ContentGetService;
+import com.blog.domain.board.domain.service.ContentSaveService;
 import com.blog.domain.board.domain.service.PostDeleteService;
 import com.blog.domain.board.domain.service.PostGetService;
 import com.blog.domain.board.domain.service.PostSaveService;
@@ -32,12 +37,16 @@ public class PostManageUsecase {
     private final PostDeleteService postDeleteService;
     private final CommentGetService commentGetService;
     private final CommentDeleteService commentDeleteService;
+    private final ContentSaveService contentCreateService;
+    private final ContentGetService contentGetService;
+    private final ContentDeleteService contentDeleteService;
 
     @Transactional
-    public void createPost(Long userId, PostCreateDto dto) {
+    public void createPost(Long userId, PostCreateRequest dto) {
         User user = userGetService.find(userId);
-        Post post = Post.CreatePost(dto.title(), dto.content(), dto.image(), user);
+        Post post = Post.CreatePost(dto.title(), user);
 
+        contentCreateService.create(dto.contents(), post);
         postSaveService.save(post);
     }
 
@@ -47,16 +56,18 @@ public class PostManageUsecase {
         Post post = postGetService.find(postId);
 
         List<Comment> comments = commentGetService.findALlByPost(post);
+        List<Content> contents = contentGetService.findAll(post);
 
-        return PostReadResponse.toResponse(post, user, comments);
+        return PostReadResponse.toResponse(post, user, contents, comments);
     }
 
     @Transactional(readOnly = true)
     public PostReadResponse readPostNoToken(UUID postId) {
         Post post = postGetService.find(postId);
         List<Comment> comments = commentGetService.findALlByPost(post);
+        List<Content> contents = contentGetService.findAll(post);
 
-        return PostReadResponse.toResponse(post, null, comments);
+        return PostReadResponse.toResponse(post, null, contents, comments);
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +76,12 @@ public class PostManageUsecase {
         List<Post> posts = postGetService.findAll(size, page);
 
         return posts.stream()
-                .map(post -> PostReadAllResponse.toResponse(post, user)).toList();
+                .map(post -> {
+                    List<Content> contents = contentGetService.findAll(post);
+                    List<Comment> comments = commentGetService.findALlByPost(post);
+                    return PostReadAllResponse.toResponse(post, user,
+                            contents.stream().map(ContentDto::fromContent).toList(), comments);
+                }).toList();
     }
 
     @Transactional(readOnly = true)
@@ -73,15 +89,23 @@ public class PostManageUsecase {
         List<Post> posts = postGetService.findAll(size, page);
 
         return posts.stream()
-                .map(post -> PostReadAllResponse.toResponse(post, null)).toList();
+                .map(post -> {
+                    List<Content> contents = contentGetService.findAll(post);
+                    List<Comment> comments = commentGetService.findALlByPost(post);
+                    return PostReadAllResponse.toResponse(post, null,
+                            contents.stream().map(ContentDto::fromContent).toList(), comments);
+                }).toList();
     }
 
     @Transactional
-    public void updatePost(Long userId, UUID postId, PostUpdateDto dto) {
+    public void updatePost(Long userId, UUID postId, PostUpdateRequest dto) {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
 
         postValidateService.certificate(post, user);
+
+        contentDeleteService.deleteAllByPost(post);
+        contentCreateService.create(dto.contents(), post);
 
         postUpdateService.update(post, dto);
     }
@@ -93,6 +117,7 @@ public class PostManageUsecase {
 
         postValidateService.certificate(post, user);
 
+        contentDeleteService.deleteAllByPost(post);
         commentDeleteService.deleteAll(post);
         postDeleteService.delete(post);
     }
