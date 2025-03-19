@@ -24,7 +24,7 @@ jobs:
 
       - name: Set up Application.yml from Secret
         run: |
-          echo ${{ secrets.APPLICATION_YML }} > src/main/resources/application-prod.yml
+          echo "${{ secrets.APPLICATION_YML }}" > src/main/resources/application-prod.yml
 
       - name: Build with Gradle Wrapper
         run: ./gradlew build -x test
