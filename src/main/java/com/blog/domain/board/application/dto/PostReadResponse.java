@@ -21,7 +21,7 @@ public record PostReadResponse(
         List<ContentDto> contents,
         @Schema(description = "게시글 소유 여부", example = "true")
         Boolean isOwner,
-        @Schema(implementation = CommentGetDto.class)
+        @ArraySchema(arraySchema = @Schema(implementation = CommentGetDto.class))
         List<CommentGetDto> comments
 ) {
     public static PostReadResponse toResponse(Post post, User user, List<Content> contents, List<Comment> comments) {
