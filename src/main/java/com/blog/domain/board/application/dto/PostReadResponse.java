@@ -5,6 +5,7 @@ import com.blog.domain.board.domain.entity.Post;
 import com.blog.domain.comment.application.dto.CommentGetDto;
 import com.blog.domain.comment.domain.entity.Comment;
 import com.blog.domain.user.domain.entity.User;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +17,7 @@ public record PostReadResponse(
         UUID postId,
         @Schema(description = "게시글 제목", example = "게시글 제목")
         String title,
-        @Schema(implementation = CommentGetDto.class)
+        @ArraySchema(arraySchema = @Schema(implementation = ContentDto.class))
         List<ContentDto> contents,
         @Schema(description = "게시글 소유 여부", example = "true")
         Boolean isOwner,
