@@ -117,6 +117,7 @@ public class PostManageUsecase {
 
         postValidateService.certificate(post, user);
 
+        contentDeleteService.deleteAllByPost(post);
         commentDeleteService.deleteAll(post);
         postDeleteService.delete(post);
     }
