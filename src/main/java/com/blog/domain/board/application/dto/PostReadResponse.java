@@ -16,7 +16,7 @@ public record PostReadResponse(
         UUID postId,
         @Schema(description = "게시글 제목", example = "게시글 제목")
         String title,
-        @Schema(description = "게시글 내용", example = "게시글 내용")
+        @Schema(implementation = CommentGetDto.class)
         List<ContentDto> contents,
         @Schema(description = "게시글 소유 여부", example = "true")
         Boolean isOwner,

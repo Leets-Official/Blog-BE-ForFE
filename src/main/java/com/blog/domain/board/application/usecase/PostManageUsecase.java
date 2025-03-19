@@ -1,5 +1,6 @@
 package com.blog.domain.board.application.usecase;
 
+import com.blog.domain.board.application.dto.ContentDto;
 import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
@@ -75,7 +76,11 @@ public class PostManageUsecase {
         List<Post> posts = postGetService.findAll(size, page);
 
         return posts.stream()
-                .map(post -> PostReadAllResponse.toResponse(post, user)).toList();
+                .map(post -> {
+                    List<Content> contents = contentGetService.findAll(post);
+                    return PostReadAllResponse.toResponse(post, user,
+                            contents.stream().map(ContentDto::fromContent).toList());
+                }).toList();
     }
 
     @Transactional(readOnly = true)
@@ -83,7 +88,11 @@ public class PostManageUsecase {
         List<Post> posts = postGetService.findAll(size, page);
 
         return posts.stream()
-                .map(post -> PostReadAllResponse.toResponse(post, null)).toList();
+                .map(post -> {
+                    List<Content> contents = contentGetService.findAll(post);
+                    return PostReadAllResponse.toResponse(post, null,
+                            contents.stream().map(ContentDto::fromContent).toList());
+                }).toList();
     }
 
     @Transactional
