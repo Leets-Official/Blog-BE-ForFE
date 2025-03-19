@@ -78,8 +78,9 @@ public class PostManageUsecase {
         return posts.stream()
                 .map(post -> {
                     List<Content> contents = contentGetService.findAll(post);
+                    List<Comment> comments = commentGetService.findALlByPost(post);
                     return PostReadAllResponse.toResponse(post, user,
-                            contents.stream().map(ContentDto::fromContent).toList());
+                            contents.stream().map(ContentDto::fromContent).toList(), comments);
                 }).toList();
     }
 
@@ -90,8 +91,9 @@ public class PostManageUsecase {
         return posts.stream()
                 .map(post -> {
                     List<Content> contents = contentGetService.findAll(post);
+                    List<Comment> comments = commentGetService.findALlByPost(post);
                     return PostReadAllResponse.toResponse(post, null,
-                            contents.stream().map(ContentDto::fromContent).toList());
+                            contents.stream().map(ContentDto::fromContent).toList(), comments);
                 }).toList();
     }
 

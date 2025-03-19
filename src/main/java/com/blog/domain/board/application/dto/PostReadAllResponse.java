@@ -1,6 +1,7 @@
 package com.blog.domain.board.application.dto;
 
 import com.blog.domain.board.domain.entity.Post;
+import com.blog.domain.comment.domain.entity.Comment;
 import com.blog.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,14 +18,18 @@ public record PostReadAllResponse(
         @ArraySchema(arraySchema = @Schema(implementation = ContentDto.class))
         List<ContentDto> contents,
         @Schema(description = "게시글 소유 여부", example = "true")
-        Boolean isOwner
+        Boolean isOwner,
+        @Schema(description = "댓글 개수", example = "1")
+        int commentCount
 ) {
-    public static PostReadAllResponse toResponse(Post post, User user, List<ContentDto> contentDtos) {
+    public static PostReadAllResponse toResponse(Post post, User user, List<ContentDto> contentDtos,
+                                                 List<Comment> comments) {
         return PostReadAllResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
                 .contents(contentDtos)
                 .isOwner(user != null && post.getUser().equals(user))
+                .commentCount(comments.size())
                 .build();
     }
 }
