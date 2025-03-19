@@ -51,7 +51,7 @@ public class Post {
                 build();
     }
 
-    public void update(String title, String content, String image) {
+    public void update(String title) {
         this.title = title;
     }
 }

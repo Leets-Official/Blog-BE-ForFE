@@ -9,4 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ContentRepository extends JpaRepository<Content, UUID> {
 
     List<Content> findAllByPostOrderByContentOrder(Post post);
+
+    void deleteAllByPost(Post post);
 }

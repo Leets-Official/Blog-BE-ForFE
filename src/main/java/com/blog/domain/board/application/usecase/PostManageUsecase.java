@@ -3,9 +3,10 @@ package com.blog.domain.board.application.usecase;
 import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
-import com.blog.domain.board.application.dto.PostUpdateDto;
+import com.blog.domain.board.application.dto.PostUpdateRequest;
 import com.blog.domain.board.domain.entity.Content;
 import com.blog.domain.board.domain.entity.Post;
+import com.blog.domain.board.domain.service.ContentDeleteService;
 import com.blog.domain.board.domain.service.ContentGetService;
 import com.blog.domain.board.domain.service.ContentSaveService;
 import com.blog.domain.board.domain.service.PostDeleteService;
@@ -37,6 +38,7 @@ public class PostManageUsecase {
     private final CommentDeleteService commentDeleteService;
     private final ContentSaveService contentCreateService;
     private final ContentGetService contentGetService;
+    private final ContentDeleteService contentDeleteService;
 
     @Transactional
     public void createPost(Long userId, PostCreateRequest dto) {
@@ -85,11 +87,14 @@ public class PostManageUsecase {
     }
 
     @Transactional
-    public void updatePost(Long userId, UUID postId, PostUpdateDto dto) {
+    public void updatePost(Long userId, UUID postId, PostUpdateRequest dto) {
         User user = userGetService.find(userId);
         Post post = postGetService.find(postId);
 
         postValidateService.certificate(post, user);
+
+        contentDeleteService.deleteAllByPost(post);
+        contentCreateService.create(dto.contents(), post);
 
         postUpdateService.update(post, dto);
     }

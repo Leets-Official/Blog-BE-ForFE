@@ -8,7 +8,7 @@ import static com.blog.domain.board.presentation.constant.ResponseMessage.UPDATE
 import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
-import com.blog.domain.board.application.dto.PostUpdateDto;
+import com.blog.domain.board.application.dto.PostUpdateRequest;
 import com.blog.domain.board.application.usecase.PostManageUsecase;
 import com.blog.global.common.auth.MemberContext;
 import com.blog.global.common.auth.annotations.UseGuards;
@@ -17,6 +17,7 @@ import com.blog.global.common.dto.ResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class PostController {
     @PostMapping
     @Operation(summary = "게시물 생성")
     @UseGuards({MemberGuard.class})
-    public ResponseDto<Void> create(@RequestBody PostCreateRequest dto) {
+    public ResponseDto<Void> create(@Valid @RequestBody PostCreateRequest dto) {
         postManageUsecase.createPost(MemberContext.getMember().id(), dto);
         return ResponseDto.of(HttpStatus.CREATED.value(), CREATE_SUCCESS.getMessage());
     }
@@ -87,7 +88,7 @@ public class PostController {
     @UseGuards({MemberGuard.class})
     public ResponseDto<Void> update(
             @Parameter(description = "수정할 게시물 id", example = "62d0e871-500c-45f2-893a-4f90fee5da99") @RequestParam UUID postId,
-            @RequestBody PostUpdateDto dto) {
+            @Valid @RequestBody PostUpdateRequest dto) {
         postManageUsecase.updatePost(MemberContext.getMember().id(), postId, dto);
         return ResponseDto.of(HttpStatus.OK.value(), UPDATE_SUCCESS.getMessage());
     }
