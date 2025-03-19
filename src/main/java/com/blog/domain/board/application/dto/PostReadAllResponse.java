@@ -23,8 +23,6 @@ public record PostReadAllResponse(
         return PostReadAllResponse.builder()
                 .postId(post.getId())
                 .title(post.getTitle())
-                .content(post.getContent())
-                .image(post.getImage())
                 .isOwner(user != null && post.getUser().equals(user))
                 .build();
     }

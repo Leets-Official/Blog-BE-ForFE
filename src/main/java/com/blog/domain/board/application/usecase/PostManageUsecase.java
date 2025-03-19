@@ -4,7 +4,9 @@ import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
 import com.blog.domain.board.application.dto.PostUpdateDto;
+import com.blog.domain.board.domain.entity.Content;
 import com.blog.domain.board.domain.entity.Post;
+import com.blog.domain.board.domain.service.ContentGetService;
 import com.blog.domain.board.domain.service.ContentSaveService;
 import com.blog.domain.board.domain.service.PostDeleteService;
 import com.blog.domain.board.domain.service.PostGetService;
@@ -34,6 +36,7 @@ public class PostManageUsecase {
     private final CommentGetService commentGetService;
     private final CommentDeleteService commentDeleteService;
     private final ContentSaveService contentCreateService;
+    private final ContentGetService contentGetService;
 
     @Transactional
     public void createPost(Long userId, PostCreateRequest dto) {
@@ -50,16 +53,18 @@ public class PostManageUsecase {
         Post post = postGetService.find(postId);
 
         List<Comment> comments = commentGetService.findALlByPost(post);
+        List<Content> contents = contentGetService.findAll(post);
 
-        return PostReadResponse.toResponse(post, user, comments);
+        return PostReadResponse.toResponse(post, user, contents, comments);
     }
 
     @Transactional(readOnly = true)
     public PostReadResponse readPostNoToken(UUID postId) {
         Post post = postGetService.find(postId);
         List<Comment> comments = commentGetService.findALlByPost(post);
+        List<Content> contents = contentGetService.findAll(post);
 
-        return PostReadResponse.toResponse(post, null, comments);
+        return PostReadResponse.toResponse(post, null, contents, comments);
     }
 
     @Transactional(readOnly = true)
