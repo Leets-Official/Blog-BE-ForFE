@@ -1,10 +1,11 @@
 package com.blog.domain.board.application.usecase;
 
-import com.blog.domain.board.application.dto.PostCreateDto;
+import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
 import com.blog.domain.board.application.dto.PostUpdateDto;
 import com.blog.domain.board.domain.entity.Post;
+import com.blog.domain.board.domain.service.ContentSaveService;
 import com.blog.domain.board.domain.service.PostDeleteService;
 import com.blog.domain.board.domain.service.PostGetService;
 import com.blog.domain.board.domain.service.PostSaveService;
@@ -32,12 +33,14 @@ public class PostManageUsecase {
     private final PostDeleteService postDeleteService;
     private final CommentGetService commentGetService;
     private final CommentDeleteService commentDeleteService;
+    private final ContentSaveService contentCreateService;
 
     @Transactional
-    public void createPost(Long userId, PostCreateDto dto) {
+    public void createPost(Long userId, PostCreateRequest dto) {
         User user = userGetService.find(userId);
-        Post post = Post.CreatePost(dto.title(), dto.content(), dto.image(), user);
+        Post post = Post.CreatePost(dto.title(), user);
 
+        contentCreateService.create(dto.contents(), post);
         postSaveService.save(post);
     }
 

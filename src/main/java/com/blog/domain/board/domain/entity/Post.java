@@ -35,13 +35,6 @@ public class Post {
     @NotBlank
     private String title;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    @NotBlank
-    private String content;
-
-    @Column(length = 255)
-    private String image;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -51,18 +44,14 @@ public class Post {
     private LocalDateTime createdAt;
 
 
-    public static Post CreatePost(String title, String content, String image, User user) {
+    public static Post CreatePost(String title, User user) {
         return Post.builder().
                 title(title).
-                content(content).
-                image(image).
                 user(user).
                 build();
     }
 
     public void update(String title, String content, String image) {
         this.title = title;
-        this.content = content;
-        this.image = image;
     }
 }
