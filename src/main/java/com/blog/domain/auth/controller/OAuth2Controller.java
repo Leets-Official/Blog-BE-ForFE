@@ -7,6 +7,8 @@ import com.blog.domain.auth.service.OAuth2Service;
 import com.blog.global.common.dto.ResponseDto;
 import com.blog.global.common.oauth.MemberInfoFromProviders;
 import com.blog.global.common.oauth.OAuth2AuthExecutor;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "AUTH")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -29,6 +32,7 @@ public class OAuth2Controller {
   private final OAuth2AuthExecutor oAuth2AuthExecutor;
 
   @GetMapping("/{provider}")
+  @Operation(summary = "OAuth2 로그인을 위한 redirect URL을 반환합니다. provider에는 'kakao'가 들어갑니다.")
   public void getOAuthLogin(
       @PathVariable("provider") String provider,
       HttpServletResponse httpServletResponse
@@ -40,6 +44,7 @@ public class OAuth2Controller {
   }
 
   @GetMapping("/{provider}/redirect")
+  @Operation(summary = "AuthCode를 받아 OAuth2 로그인을 진행합니다. provider에는 'kakao'가 들어갑니다.")
   public ResponseDto<LoginPostResponse> getOAuthLoginRedirect(
       @PathVariable("provider") String provider,
       @RequestParam("code") String code) {

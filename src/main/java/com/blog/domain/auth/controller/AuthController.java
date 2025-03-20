@@ -9,6 +9,8 @@ import com.blog.domain.auth.dto.responses.LoginPostResponse;
 import com.blog.domain.auth.dto.responses.RegisterPostResponse;
 import com.blog.domain.auth.service.AuthService;
 import com.blog.global.common.dto.ResponseDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "AUTH")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
+  @Operation(summary = "회원가입 API")
   public ResponseDto<RegisterPostResponse> postRegister(
       @RequestBody @Valid RegisterPostRequest registerPostRequest) {
 
@@ -34,6 +38,7 @@ public class AuthController {
   }
 
   @PostMapping("/login")
+  @Operation(summary = "로그인 API")
   public ResponseDto<LoginPostResponse> postLogin(
       @RequestBody @Valid LoginPostRequest loginPostRequest
   ) {
@@ -44,6 +49,7 @@ public class AuthController {
   }
 
   @PostMapping("/reissue")
+  @Operation(summary = "Access Token을 재발급하는 API")
   public ResponseDto<AccessTokenReissuePostResponse> postAccessTokenReissue(
       @RequestBody @Valid AccessTokenReissuePostRequest accessTokenReissuePostRequest
   ) {
