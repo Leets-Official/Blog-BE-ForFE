@@ -21,7 +21,7 @@ public class CorsConfig {
     CorsConfiguration config = new CorsConfiguration();
 
     config.setAllowCredentials(true);
-    config.addAllowedOriginPattern(".leets.land");
+//    config.addAllowedOriginPattern(".leets.land");
 
     List<String> corsConfig = this.appConfigProperties.getCorsDomain();
 
