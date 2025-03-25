@@ -7,6 +7,7 @@ import com.blog.domain.comment.domain.entity.Comment;
 import com.blog.domain.user.domain.entity.User;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import lombok.Builder;
@@ -22,7 +23,13 @@ public record PostReadResponse(
         @Schema(description = "게시글 소유 여부", example = "true")
         Boolean isOwner,
         @ArraySchema(arraySchema = @Schema(implementation = CommentGetDto.class))
-        List<CommentGetDto> comments
+        List<CommentGetDto> comments,
+        @Schema(description = "작성자 닉네임", example = "멋쟁이프론트")
+        String nickName,
+        @Schema(description = "작성자 프로필 사진 url", example = "url")
+        String profileUrl,
+        @Schema(description = "게시글 작성일자", implementation = LocalDateTime.class)
+        LocalDateTime createdAt
 ) {
     public static PostReadResponse toResponse(Post post, User user, List<Content> contents, List<Comment> comments) {
         List<CommentGetDto> dtos = comments.stream()
@@ -38,6 +45,9 @@ public record PostReadResponse(
                 .title(post.getTitle())
                 .contents(contentDtos)
                 .isOwner(user != null && post.getUser().equals(user))
+                .nickName(post.getUser().getNickname())
+                .profileUrl(post.getUser().getProfilePicture())
+                .createdAt(post.getCreatedAt())
                 .comments(dtos)
                 .build();
     }
