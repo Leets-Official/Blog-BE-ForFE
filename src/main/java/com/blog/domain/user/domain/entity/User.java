@@ -30,6 +30,9 @@ public class User {
     @Setter
     private String nickname;
 
+    @Column(length = 20)
+    private String name;
+
     @Column(name = "profile_picture", length = 255)
     @Setter
     private String profilePicture;
@@ -41,12 +44,21 @@ public class User {
     @Setter
     private String password;
 
+    @Column(nullable = false)
+    private LocalDate birthDate;
+
+    @Column(length = 30)
+    private String introduction;
+
     public static User create(RegisterPostRequest request, String encodedPassword) {
         return User.builder()
             .nickname(request.nickname())
             .profilePicture(request.profilePicture())
             .email(request.email())
             .password(encodedPassword)
+            .birthDate(LocalDate.parse(request.birthDate()))
+            .name(request.name())
+            .introduction(request.introduction())
             .build();
     }
 }
