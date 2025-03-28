@@ -70,9 +70,13 @@ public class OAuth2Controller {
 
   @PostMapping("/register-oauth")
   @Operation(summary = "OAuth2 회원가입을 진행합니다.")
-  public RegisterPostResponse postOAuthRegister(
+  public ResponseDto<RegisterPostResponse> postOAuthRegister(
       @RequestBody @Valid OAuthRegisterRequest oAuthRegisterRequest
   ) {
-    return this.oAuth2Service.oauth2Register(oAuthRegisterRequest);
+    return ResponseDto.of(
+        HttpStatus.CREATED.value(),
+        ResponseMessage.REGISTER_SUCCESS.getMessage(),
+        this.oAuth2Service.oauth2Register(oAuthRegisterRequest)
+    );
   }
 }

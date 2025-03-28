@@ -2,6 +2,7 @@ package com.blog.domain.user.domain.entity;
 
 import com.blog.domain.auth.dto.requests.OAuthRegisterRequest;
 import com.blog.domain.auth.dto.requests.RegisterPostRequest;
+import com.blog.domain.user.application.dto.request.UserPatchRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -73,5 +74,15 @@ public class User {
             .name(request.name())
             .introduction(request.introduction())
             .build();
+    }
+
+    public void updateUserInfoFrom(UserPatchRequest userPatchRequest, String encodedPassword) {
+        this.nickname = userPatchRequest.nickname();
+        this.profilePicture = userPatchRequest.profilePicture();
+        this.name = userPatchRequest.name();
+        this.introduction = userPatchRequest.introduction();
+        this.email = userPatchRequest.email();
+        this.birthDate = LocalDate.parse(userPatchRequest.birthDate());
+        this.password = encodedPassword;
     }
 }

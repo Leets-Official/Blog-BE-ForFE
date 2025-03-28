@@ -8,6 +8,7 @@ import com.blog.domain.auth.dto.responses.RegisterPostResponse;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserService;
 import com.blog.domain.user.exception.EmailDuplicateException;
+import com.blog.domain.user.exception.NicknameDuplicateException;
 import com.blog.global.common.oauth.MemberInfoFromProviders;
 import com.blog.global.config.properties.AppConfigProperties;
 import jakarta.transaction.Transactional;
@@ -45,6 +46,11 @@ public class OAuth2Service {
     boolean isEmailDuplicate = this.userService.checkEmailDuplicate(oAuthRegisterRequest.email());
     if (isEmailDuplicate) {
       throw new EmailDuplicateException();
+    }
+
+    boolean isNicknameDuplicate = this.userService.checkNicknameDuplicate(oAuthRegisterRequest.nickname());
+    if (isNicknameDuplicate) {
+      throw new NicknameDuplicateException();
     }
 
     User user = User.create(oAuthRegisterRequest,

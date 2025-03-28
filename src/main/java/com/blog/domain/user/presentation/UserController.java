@@ -3,6 +3,7 @@ package com.blog.domain.user.presentation;
 import com.blog.domain.user.application.dto.request.NicknamePatchRequest;
 import com.blog.domain.user.application.dto.request.PasswordPatchRequest;
 import com.blog.domain.user.application.dto.request.ProfilePicturePatchRequest;
+import com.blog.domain.user.application.dto.request.UserPatchRequest;
 import com.blog.domain.user.application.dto.response.UserGetResponse;
 import com.blog.domain.user.domain.service.UserGetService;
 import com.blog.domain.user.domain.service.UserService;
@@ -28,6 +29,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+
+  @PatchMapping
+  @UseGuards({MemberGuard.class})
+  @Operation(summary = "유저 정보를 수정하는 API입니다.")
+  public ResponseDto<Void> updateUser(
+    @RequestBody @Valid UserPatchRequest userPatchRequest
+  ) {
+    this.userService.updateUser(userPatchRequest);
+
+    return ResponseDto.of(HttpStatus.OK.value(), ResponseMessage.USER_UPDATED.getMessage());
+  }
 
   @PatchMapping("/picture")
   @UseGuards({MemberGuard.class})
