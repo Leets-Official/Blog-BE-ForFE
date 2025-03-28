@@ -31,7 +31,21 @@ public record RegisterPostRequest(
 
     @Schema(description = "프로필 사진 URL", example = "https://example.com/profile.jpg")
     @Size(max = 1000, message = "프로필 사진의 길이가, 허용량을 초과했습니다.")
-    String profilePicture
+    String profilePicture,
+
+    @Schema(description = "생년월일 (YYYY-MM-DD)", example = "2000-01-01")
+    @NotNull(message = "생년월일은 필수 입력 사항입니다.")
+    String birthDate,
+
+    @Schema(description = "사용자 이름", example = "김주영")
+    @Size(max = 20, message = "이름은 최대 20자 이하여야 합니다.")
+    @Pattern(regexp = "^[가-힣]*$", message = "이름은 한글만 가능합니다.")
+    @NotEmpty(message = "이름은 공백이 아니어야 합니다.")
+    String name,
+
+    @Schema(description = "사용자 소개", example = "안녕하세요!")
+    @Size(max = 30, message = "소개는 최대 30자 이하여야 합니다.")
+    String introduction
 ) {
 
     public static RegisterPostRequest createOauthRegister(String email, String nickname, String password, String profilePicture) {
