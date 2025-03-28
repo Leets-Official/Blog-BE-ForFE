@@ -1,5 +1,6 @@
 package com.blog.domain.user.domain.entity;
 
+import com.blog.domain.auth.dto.requests.OAuthRegisterRequest;
 import com.blog.domain.auth.dto.requests.RegisterPostRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,6 +57,18 @@ public class User {
             .profilePicture(request.profilePicture())
             .email(request.email())
             .password(encodedPassword)
+            .birthDate(LocalDate.parse(request.birthDate()))
+            .name(request.name())
+            .introduction(request.introduction())
+            .build();
+    }
+
+    public static User create(OAuthRegisterRequest request, String encodedDummyPassword) {
+        return User.builder()
+            .nickname(request.nickname())
+            .profilePicture(request.profilePicture())
+            .email(request.email())
+            .password(encodedDummyPassword)
             .birthDate(LocalDate.parse(request.birthDate()))
             .name(request.name())
             .introduction(request.introduction())
