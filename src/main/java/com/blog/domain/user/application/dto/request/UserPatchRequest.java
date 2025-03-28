@@ -1,16 +1,13 @@
-package com.blog.domain.auth.dto.requests;
+package com.blog.domain.user.application.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import java.util.UUID;
 
-@Schema(description = "회원가입 요청 DTO")
-public record RegisterPostRequest(
+public record UserPatchRequest(
     @Schema(description = "사용자 이메일", example = "user@example.com")
     @NotEmpty(message = "이메일은 필수 입력 사항입니다.")
     @Email(regexp = "^\\w+([.-]?\\w+)*@\\w+([.-]?\\w+)*(\\.\\w{2,3})+$", message = "이메일 형식이 올바르지 않습니다.")
@@ -47,4 +44,5 @@ public record RegisterPostRequest(
     @Size(max = 30, message = "소개는 최대 30자 이하여야 합니다.")
     String introduction
 ) {
+
 }

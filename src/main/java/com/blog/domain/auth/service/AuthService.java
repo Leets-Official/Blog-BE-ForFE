@@ -10,6 +10,7 @@ import com.blog.domain.auth.exception.LoginFailureException;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserService;
 import com.blog.domain.user.exception.EmailDuplicateException;
+import com.blog.domain.user.exception.NicknameDuplicateException;
 import com.blog.global.common.utils.jwt.JwtAuthenticator;
 import com.blog.global.common.utils.jwt.JwtExtractor;
 import com.blog.global.common.utils.jwt.JwtProvider;
@@ -72,6 +73,11 @@ public class AuthService {
     boolean isEmailDuplicated = this.userService.checkEmailDuplicate(registerPostRequest.email());
     if (isEmailDuplicated) {
       throw new EmailDuplicateException();
+    }
+
+    boolean isNicknameDuplicate = this.userService.checkNicknameDuplicate(registerPostRequest.nickname());
+    if (isNicknameDuplicate) {
+      throw new NicknameDuplicateException();
     }
 
     String hashedPassword = this.userService.hashPassword(registerPostRequest.password());

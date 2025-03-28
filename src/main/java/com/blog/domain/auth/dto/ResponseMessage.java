@@ -15,7 +15,8 @@ public enum ResponseMessage {
   NOT_FOUND_ACCESS_TOKEN("Access Token을 찾을 수 없습니다."),
   NOT_FOUND_REFRESH_TOKEN("Refresh Token을 찾을 수 없습니다."),
   REISSUE_ACCESS_TOKEN_SUCCESS("액세스 토큰 재발급에 성공했습니다."),
-  OAUTH2_REGISTER_FAILURE("OAuth2 회원가입에 실패했습니다.");
+  OAUTH2_REGISTER_FAILURE("OAuth2 회원가입에 실패했습니다."),
+  OAUTH2_REGISTER_REQUIRED("OAuth2 회원가입이 필요합니다.");
 
   private final String message;
 }

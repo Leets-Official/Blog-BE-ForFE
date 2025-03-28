@@ -1,6 +1,8 @@
 package com.blog.domain.user.domain.entity;
 
+import com.blog.domain.auth.dto.requests.OAuthRegisterRequest;
 import com.blog.domain.auth.dto.requests.RegisterPostRequest;
+import com.blog.domain.user.application.dto.request.UserPatchRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -30,6 +32,9 @@ public class User {
     @Setter
     private String nickname;
 
+    @Column(length = 20)
+    private String name;
+
     @Column(name = "profile_picture", length = 255)
     @Setter
     private String profilePicture;
@@ -41,12 +46,43 @@ public class User {
     @Setter
     private String password;
 
+    @Column(nullable = false)
+    private LocalDate birthDate;
+
+    @Column(length = 30)
+    private String introduction;
+
     public static User create(RegisterPostRequest request, String encodedPassword) {
         return User.builder()
             .nickname(request.nickname())
             .profilePicture(request.profilePicture())
             .email(request.email())
             .password(encodedPassword)
+            .birthDate(LocalDate.parse(request.birthDate()))
+            .name(request.name())
+            .introduction(request.introduction())
             .build();
+    }
+
+    public static User create(OAuthRegisterRequest request, String encodedDummyPassword) {
+        return User.builder()
+            .nickname(request.nickname())
+            .profilePicture(request.profilePicture())
+            .email(request.email())
+            .password(encodedDummyPassword)
+            .birthDate(LocalDate.parse(request.birthDate()))
+            .name(request.name())
+            .introduction(request.introduction())
+            .build();
+    }
+
+    public void updateUserInfoFrom(UserPatchRequest userPatchRequest, String encodedPassword) {
+        this.nickname = userPatchRequest.nickname();
+        this.profilePicture = userPatchRequest.profilePicture();
+        this.name = userPatchRequest.name();
+        this.introduction = userPatchRequest.introduction();
+        this.email = userPatchRequest.email();
+        this.birthDate = LocalDate.parse(userPatchRequest.birthDate());
+        this.password = encodedPassword;
     }
 }

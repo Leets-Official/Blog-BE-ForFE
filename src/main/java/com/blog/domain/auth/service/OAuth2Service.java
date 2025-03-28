@@ -1,12 +1,14 @@
 package com.blog.domain.auth.service;
 
 import com.blog.domain.auth.dto.requests.LoginPostRequest;
-import com.blog.domain.auth.dto.requests.RegisterPostRequest;
-import com.blog.domain.auth.dto.responses.LoginPostResponse;
+import com.blog.domain.auth.dto.requests.OAuthRegisterRequest;
+import com.blog.domain.auth.dto.responses.OAuthLoginResponse;
+import com.blog.domain.auth.dto.responses.OAuthRegisterRequiredResponse;
 import com.blog.domain.auth.dto.responses.RegisterPostResponse;
-import com.blog.domain.auth.exception.OAuth2RegisterFailureException;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserService;
+import com.blog.domain.user.exception.EmailDuplicateException;
+import com.blog.domain.user.exception.NicknameDuplicateException;
 import com.blog.global.common.oauth.MemberInfoFromProviders;
 import com.blog.global.config.properties.AppConfigProperties;
 import jakarta.transaction.Transactional;
@@ -25,28 +27,36 @@ public class OAuth2Service {
   private final AppConfigProperties appConfigProperties;
 
   @Transactional
-  public LoginPostResponse oauth2Login(MemberInfoFromProviders memberInfoFromProviders) {
+  public OAuthLoginResponse oauth2Login(MemberInfoFromProviders memberInfoFromProviders) {
     Optional<User> getLoginAvailableResponse =
         this.userService.checkLoginAvailableByNickname(memberInfoFromProviders.nickname(),
             this.appConfigProperties.getOauthDummyPassword());
 
     if (getLoginAvailableResponse.isEmpty()) {
-      RegisterPostRequest oauthRegister =
-          RegisterPostRequest.createOauthRegister(
-              memberInfoFromProviders.email(),
-              memberInfoFromProviders.nickname(),
-              this.appConfigProperties.getOauthDummyPassword(),
-              memberInfoFromProviders.picture()
-          );
-      this.authService.register(oauthRegister);
-
-      this.userService.checkLoginAvailable(oauthRegister.email(),
-              this.appConfigProperties.getOauthDummyPassword())
-          .orElseThrow(OAuth2RegisterFailureException::new);
+      return OAuthRegisterRequiredResponse.from(memberInfoFromProviders);
     }
 
     LoginPostRequest loginPostRequest = LoginPostRequest.createOAuthLogin(
         memberInfoFromProviders.nickname(), this.appConfigProperties.getOauthDummyPassword());
     return this.authService.login(loginPostRequest, true);
+  }
+
+  @Transactional
+  public RegisterPostResponse oauth2Register(OAuthRegisterRequest oAuthRegisterRequest) {
+    boolean isEmailDuplicate = this.userService.checkEmailDuplicate(oAuthRegisterRequest.email());
+    if (isEmailDuplicate) {
+      throw new EmailDuplicateException();
+    }
+
+    boolean isNicknameDuplicate = this.userService.checkNicknameDuplicate(oAuthRegisterRequest.nickname());
+    if (isNicknameDuplicate) {
+      throw new NicknameDuplicateException();
+    }
+
+    User user = User.create(oAuthRegisterRequest,
+        this.userService.hashPassword(this.appConfigProperties.getOauthDummyPassword())
+    );
+
+    return RegisterPostResponse.of(this.userService.save(user));
   }
 }

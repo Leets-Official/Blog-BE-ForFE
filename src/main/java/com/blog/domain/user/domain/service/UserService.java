@@ -1,8 +1,11 @@
 package com.blog.domain.user.domain.service;
 
+import com.blog.domain.user.application.dto.request.UserPatchRequest;
 import com.blog.domain.user.application.dto.response.UserGetResponse;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.repository.UserRepository;
+import com.blog.domain.user.exception.EmailDuplicateException;
+import com.blog.domain.user.exception.NicknameDuplicateException;
 import com.blog.domain.user.exception.UserNotFoundException;
 import com.blog.global.common.auth.MemberContext;
 import com.blog.global.common.auth.TokenMemberInfo;
@@ -50,6 +53,10 @@ public class UserService {
     return this.userRepository.findByEmail(email).isPresent();
   }
 
+  public boolean checkNicknameDuplicate(String nickname) {
+    return this.userRepository.findByNickname(nickname).isPresent();
+  }
+
   public String hashPassword(String password) {
     return this.bCryptPasswordEncoder.encode(password);
   }
@@ -87,5 +94,27 @@ public class UserService {
     TokenMemberInfo member = MemberContext.getMember();
 
     return UserGetResponse.from(this.findById(member.id()));
+  }
+
+  @Transactional
+  public void updateUser(UserPatchRequest userPatchRequest) {
+    boolean isEmailDuplicate = this.checkEmailDuplicate(userPatchRequest.email());
+    if (isEmailDuplicate) {
+      throw new EmailDuplicateException();
+    }
+
+    boolean isNicknameDuplicate = this.checkNicknameDuplicate(userPatchRequest.nickname());
+    if (isNicknameDuplicate) {
+      throw new NicknameDuplicateException();
+    }
+
+    TokenMemberInfo member = MemberContext.getMember();
+    User user = this.findById(member.id());
+
+    String hashedPassword = this.hashPassword(userPatchRequest.password());
+
+    user.updateUserInfoFrom(userPatchRequest, hashedPassword);
+
+    this.save(user);
   }
 }
