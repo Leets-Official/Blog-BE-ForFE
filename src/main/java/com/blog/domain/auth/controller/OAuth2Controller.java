@@ -2,6 +2,7 @@ package com.blog.domain.auth.controller;
 
 import com.blog.domain.auth.dto.ResponseMessage;
 import com.blog.domain.auth.dto.responses.LoginPostResponse;
+import com.blog.domain.auth.dto.responses.OAuthLoginResponse;
 import com.blog.domain.auth.entity.enums.OAuthProvider;
 import com.blog.domain.auth.service.OAuth2Service;
 import com.blog.global.common.dto.ResponseDto;
@@ -31,35 +32,33 @@ public class OAuth2Controller {
   // utils
   private final OAuth2AuthExecutor oAuth2AuthExecutor;
 
-  @GetMapping("/{provider}")
-  @Operation(summary = "OAuth2 로그인을 위한 redirect URL을 반환합니다. provider에는 'kakao'가 들어갑니다.")
+  @GetMapping("/kakao")
+  @Operation(summary = "OAuth2 로그인을 위한 redirect URL을 반환합니다.")
   public void getOAuthLogin(
-      @PathVariable("provider") String provider,
       HttpServletResponse httpServletResponse
   ) throws IOException {
-    OAuthProvider oAuthProviders = OAuthProvider.valueOf(provider.toUpperCase());
+    OAuthProvider oAuthProviders = OAuthProvider.valueOf("KAKAO");
     String authorizationUrl = this.oAuth2AuthExecutor.getAuthorizationUrl(
         oAuthProviders.getOauthUrlBuilderClass());
     httpServletResponse.sendRedirect(authorizationUrl);
   }
 
-  @GetMapping("/{provider}/redirect")
-  @Operation(summary = "AuthCode를 받아 OAuth2 로그인을 진행합니다. provider에는 'kakao'가 들어갑니다.")
-  public ResponseDto<LoginPostResponse> getOAuthLoginRedirect(
-      @PathVariable("provider") String provider,
+  @GetMapping("/kakao/redirect")
+  @Operation(summary = "AuthCode를 받아 OAuth2 로그인을 진행합니다.")
+  public ResponseDto<OAuthLoginResponse> getOAuthLoginRedirect(
       @RequestParam("code") String code) {
-    OAuthProvider oAuthProviders = OAuthProvider.valueOf(provider.toUpperCase());
+    OAuthProvider oAuthProviders = OAuthProvider.valueOf("KAKAO");
     MemberInfoFromProviders memberInfoFromProviders =
         this.oAuth2AuthExecutor.getMemberInfoFrom(
           oAuthProviders.getOauth2ProviderClientClass(),
           code
         );
 
-    LoginPostResponse loginInfo = this.oAuth2Service.oauth2Login(memberInfoFromProviders);
+    OAuthLoginResponse loginInfo = this.oAuth2Service.oauth2Login(memberInfoFromProviders);
 
     return ResponseDto.of(
         HttpStatus.OK.value(),
-        ResponseMessage.LOGIN_SUCCESS.getMessage(),
+        loginInfo.getResponseMessage(),
         loginInfo
     );
   }

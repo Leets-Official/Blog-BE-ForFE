@@ -1,5 +1,6 @@
 package com.blog.domain.auth.dto.responses;
 
+import com.blog.domain.auth.dto.ResponseMessage;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "로그인 응답 DTO")
@@ -15,5 +16,10 @@ public record LoginPostResponse(
     
     @Schema(description = "프로필 사진 URL", example = "https://example.com/profile.jpg")
     String profilePicture
-) {
+) implements OAuthLoginResponse{
+
+    @Override
+    public String getResponseMessage() {
+        return ResponseMessage.LOGIN_SUCCESS.getMessage();
+    }
 }
