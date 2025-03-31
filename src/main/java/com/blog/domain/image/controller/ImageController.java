@@ -19,7 +19,6 @@ public class ImageController {
   private final ImageService imageService;
 
   @GetMapping("/presigned-url")
-  @UseGuards({MemberGuard.class})
   @Operation(summary = "Presigned Url 반환을 위한 API")
   public ResponseDto<String> getPresignedUrl(
       @RequestParam String fileName) {
