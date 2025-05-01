@@ -110,11 +110,7 @@ public class AuthService {
 
     user = this.userService.save(user);
 
-    return new RegisterPostResponse(
-        user.getEmail(),
-        user.getNickname(),
-        user.getProfilePicture()
-    );
+    return RegisterPostResponse.of(user);
   }
 
   public AccessTokenReissuePostResponse reissueAccessTokenAndRefreshToken(String refreshToken) {
