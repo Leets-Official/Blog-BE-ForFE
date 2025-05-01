@@ -52,6 +52,9 @@ public class User {
     @Column(length = 30)
     private String introduction;
 
+    @Column(name = "kakao_id")
+    private Long kakaoId;
+
     public static User create(RegisterPostRequest request, String encodedPassword) {
         return User.builder()
             .nickname(request.nickname())
@@ -73,6 +76,7 @@ public class User {
             .birthDate(LocalDate.parse(request.birthDate()))
             .name(request.name())
             .introduction(request.introduction())
+            .kakaoId(request.kakaoId())
             .build();
     }
 

@@ -12,9 +12,11 @@ import com.blog.global.common.auth.TokenMemberInfo;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -34,14 +36,21 @@ public class UserService {
     return Optional.empty();
   }
 
-  public Optional<User> checkLoginAvailableByNickname(String nickname, String password) {
-    Optional<User> userOptional = this.userRepository.findByNickname(nickname);
+  public Optional<User> checkLoginAvailableByKakaoId(Long kakaoId) {
+    return this.userRepository.findByKakaoId(kakaoId);
+  }
+
+  public Optional<User> checkLoginAvailableByEmail(String email, String password) {
+    Optional<User> userOptional = this.userRepository.findByEmail(email);
+    log.info("userOptional: {}", userOptional);
+    log.info("email: {}", email);
     if (userOptional.isPresent()) {
       User member = userOptional.get();
       if (this.bCryptPasswordEncoder.matches(password, member.getPassword())) {
         return userOptional;
       }
     }
+
     return Optional.empty();
   }
 

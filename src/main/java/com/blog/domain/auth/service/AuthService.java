@@ -11,6 +11,7 @@ import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserService;
 import com.blog.domain.user.exception.EmailDuplicateException;
 import com.blog.domain.user.exception.NicknameDuplicateException;
+import com.blog.global.common.oauth.MemberInfoFromProviders;
 import com.blog.global.common.utils.jwt.JwtAuthenticator;
 import com.blog.global.common.utils.jwt.JwtExtractor;
 import com.blog.global.common.utils.jwt.JwtProvider;
@@ -32,19 +33,39 @@ public class AuthService {
   private final JwtExtractor jwtExtractor;
 
   @Transactional
-  public LoginPostResponse login(LoginPostRequest loginPostRequest, boolean isOAuth) {
+  public LoginPostResponse login(LoginPostRequest loginPostRequest) {
     Optional<User> isLoginAvailable;
-    if (isOAuth) {
-      isLoginAvailable = this.userService.checkLoginAvailableByNickname(
-          loginPostRequest.email(),
-          loginPostRequest.password()
-      );
-    } else {
-       isLoginAvailable = this.userService.checkLoginAvailable(
-          loginPostRequest.email(),
-          loginPostRequest.password()
-      );
+    isLoginAvailable = this.userService.checkLoginAvailable(
+        loginPostRequest.email(),
+        loginPostRequest.password()
+    );
+
+    if (isLoginAvailable.isEmpty()) {
+      throw new LoginFailureException();
     }
+
+    User user = isLoginAvailable.get();
+
+    String accessToken = this.jwtProvider.generateAccessToken(
+        user.getId(),
+        user.getEmail(),
+        user.getNickname()
+    );
+
+    String refreshToken = this.jwtProvider.generateRefreshToken(user.getId());
+
+    return new LoginPostResponse(
+        accessToken,
+        refreshToken,
+        user.getNickname(),
+        user.getProfilePicture()
+    );
+  }
+
+  @Transactional
+  public LoginPostResponse login(MemberInfoFromProviders memberInfoFromProviders) {
+    Optional<User> isLoginAvailable = this.userService.checkLoginAvailableByKakaoId(
+        memberInfoFromProviders.id());
 
     if (isLoginAvailable.isEmpty()) {
       throw new LoginFailureException();
@@ -75,7 +96,8 @@ public class AuthService {
       throw new EmailDuplicateException();
     }
 
-    boolean isNicknameDuplicate = this.userService.checkNicknameDuplicate(registerPostRequest.nickname());
+    boolean isNicknameDuplicate = this.userService.checkNicknameDuplicate(
+        registerPostRequest.nickname());
     if (isNicknameDuplicate) {
       throw new NicknameDuplicateException();
     }

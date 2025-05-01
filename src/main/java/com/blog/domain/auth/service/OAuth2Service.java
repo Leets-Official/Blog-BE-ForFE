@@ -14,8 +14,10 @@ import com.blog.global.config.properties.AppConfigProperties;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OAuth2Service {
@@ -29,16 +31,13 @@ public class OAuth2Service {
   @Transactional
   public OAuthLoginResponse oauth2Login(MemberInfoFromProviders memberInfoFromProviders) {
     Optional<User> getLoginAvailableResponse =
-        this.userService.checkLoginAvailableByNickname(memberInfoFromProviders.nickname(),
-            this.appConfigProperties.getOauthDummyPassword());
+        this.userService.checkLoginAvailableByKakaoId(memberInfoFromProviders.id());
 
     if (getLoginAvailableResponse.isEmpty()) {
       return OAuthRegisterRequiredResponse.from(memberInfoFromProviders);
     }
 
-    LoginPostRequest loginPostRequest = LoginPostRequest.createOAuthLogin(
-        memberInfoFromProviders.nickname(), this.appConfigProperties.getOauthDummyPassword());
-    return this.authService.login(loginPostRequest, true);
+    return this.authService.login(memberInfoFromProviders);
   }
 
   @Transactional

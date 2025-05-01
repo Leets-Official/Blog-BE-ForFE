@@ -62,7 +62,7 @@ public class OAuth2Controller {
     OAuthLoginResponse loginInfo = this.oAuth2Service.oauth2Login(memberInfoFromProviders);
 
     return ResponseDto.of(
-        HttpStatus.OK.value(),
+        loginInfo.getHttpStatus().value(),
         loginInfo.getResponseMessage(),
         loginInfo
     );

@@ -43,7 +43,7 @@ public class AuthController {
       @RequestBody @Valid LoginPostRequest loginPostRequest
   ) {
     LoginPostResponse loginPostResponse =
-        this.authService.login(loginPostRequest, false);
+        this.authService.login(loginPostRequest);
 
     return ResponseDto.of(HttpStatus.OK.value(), ResponseMessage.LOGIN_SUCCESS.getMessage(), loginPostResponse);
   }

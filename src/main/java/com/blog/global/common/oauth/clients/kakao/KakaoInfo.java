@@ -2,6 +2,7 @@ package com.blog.global.common.oauth.clients.kakao;
 
 import com.blog.domain.auth.entity.enums.OAuthProvider;
 import com.blog.global.common.oauth.MemberInfoFromProviders;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -56,6 +57,7 @@ public record KakaoInfo(
       KakaoInfo kakaoInfo = objectMapper.readValue(jsonResponse, KakaoInfo.class);
 
       return new MemberInfoFromProviders(
+          kakaoInfo.id(),
           kakaoInfo.kakaoAccount().email,
           kakaoInfo.properties().nickname,
           kakaoInfo.properties().profileImage,

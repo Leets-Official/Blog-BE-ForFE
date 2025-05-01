@@ -35,7 +35,11 @@ public record OAuthRegisterRequest(
 
     @Schema(description = "사용자 소개", example = "안녕하세요!")
     @Size(max = 30, message = "소개는 최대 30자 이하여야 합니다.")
-    String introduction
+    String introduction,
+
+    @Schema(description = "redirect 응답에서 반환된 카카오 아이디")
+    @NotNull
+    Long kakaoId
 ) {
 
 }

@@ -5,6 +5,7 @@ import com.blog.domain.auth.entity.enums.OAuthProvider;
 import com.blog.domain.user.domain.entity.User;
 
 public record MemberInfoFromProviders(
+    Long id,
     String email,
     String nickname,
     String picture,
