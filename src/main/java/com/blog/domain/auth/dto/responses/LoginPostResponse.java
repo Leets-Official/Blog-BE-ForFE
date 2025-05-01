@@ -16,7 +16,11 @@ public record LoginPostResponse(
     String nickname,
     
     @Schema(description = "프로필 사진 URL", example = "https://example.com/profile.jpg")
-    String profilePicture
+    String profilePicture,
+
+    @Schema(description = "한줄 소개")
+    String introduction
+
 ) implements OAuthLoginResponse{
 
     @Override

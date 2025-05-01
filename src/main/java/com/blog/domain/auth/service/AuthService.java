@@ -58,7 +58,8 @@ public class AuthService {
         accessToken,
         refreshToken,
         user.getNickname(),
-        user.getProfilePicture()
+        user.getProfilePicture(),
+        user.getIntroduction()
     );
   }
 
@@ -85,7 +86,8 @@ public class AuthService {
         accessToken,
         refreshToken,
         user.getNickname(),
-        user.getProfilePicture()
+        user.getProfilePicture(),
+        user.getIntroduction()
     );
   }
 

@@ -12,14 +12,18 @@ public record RegisterPostResponse(
     String nickname,
     
     @Schema(description = "등록된 프로필 사진 URL", example = "https://example.com/profile.jpg")
-    String profilePicture
+    String profilePicture,
+
+    @Schema(description = "등록된 한줄 소개")
+    String introduction
 ) {
 
     public static RegisterPostResponse of(User user) {
         return new RegisterPostResponse(
             user.getEmail(),
             user.getNickname(),
-            user.getProfilePicture()
+            user.getProfilePicture(),
+            user.getIntroduction()
         );
     }
 }
