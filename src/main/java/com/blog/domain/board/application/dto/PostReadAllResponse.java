@@ -1,35 +1,18 @@
 package com.blog.domain.board.application.dto;
 
-import com.blog.domain.board.domain.entity.Post;
-import com.blog.domain.comment.domain.entity.Comment;
-import com.blog.domain.user.domain.entity.User;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
-import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
-import java.util.UUID;
+
 import lombok.Builder;
 
 @Builder
 public record PostReadAllResponse(
-        @Schema(description = "게시글 id", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
-        UUID postId,
-        @Schema(description = "게시글 제목", example = "게시글 제목")
-        String title,
-        @ArraySchema(arraySchema = @Schema(implementation = ContentDto.class))
-        List<ContentDto> contents,
-        @Schema(description = "게시글 소유 여부", example = "true")
-        Boolean isOwner,
-        @Schema(description = "댓글 개수", example = "1")
-        int commentCount
+	List<PostReadResponse> post,
+	long pageMax
 ) {
-    public static PostReadAllResponse toResponse(Post post, User user, List<ContentDto> contentDtos,
-                                                 List<Comment> comments) {
-        return PostReadAllResponse.builder()
-                .postId(post.getId())
-                .title(post.getTitle())
-                .contents(contentDtos)
-                .isOwner(user != null && post.getUser().equals(user))
-                .commentCount(comments.size())
-                .build();
-    }
+	public static PostReadAllResponse toResponse(List<PostReadResponse> postDtos, int pageSize) {
+		return PostReadAllResponse.builder()
+			.post(postDtos)
+			.pageMax(pageSize)
+			.build();
+	}
 }
