@@ -27,7 +27,10 @@ public class CorsConfig {
 		//    config.addAllowedOriginPattern(".leets.land");
 
 		appConfigProperties.setCorsDomain(List.of("https://kdh-main.d2snz5jzmbs2zl.amplifyapp.com",
-			"https://week7-shin-donghyeon.d1z7wqxq02basu.amplifyapp.com/"));
+			"https://week7-shin-donghyeon.d1z7wqxq02basu.amplifyapp.com/",
+			"https://week7-jcw.d3p6q7thzc3f0z.amplifyapp.com",
+			"https://seonayoung-7week.d22n5fory5ccqn.amplifyapp.com",
+			"http://localhost:3000"));
 		List<String> corsConfig = this.appConfigProperties.getCorsDomain();
 
 		config.setAllowedOriginPatterns(corsConfig);
