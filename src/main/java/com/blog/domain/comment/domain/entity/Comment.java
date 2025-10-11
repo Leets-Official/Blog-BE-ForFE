@@ -12,10 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Builder
@@ -41,12 +43,16 @@ public class Comment {
     @NotBlank
     private String content;
 
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
     public static Comment of(String content, Post post, User user) {
         return Comment.builder()
-                .content(content)
-                .post(post)
-                .user(user)
-                .build();
+            .content(content)
+            .post(post)
+            .user(user)
+            .build();
     }
 
     public void updateContent(String content) {

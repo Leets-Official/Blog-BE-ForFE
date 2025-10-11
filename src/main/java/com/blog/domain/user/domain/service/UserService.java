@@ -9,6 +9,7 @@ import com.blog.domain.user.exception.NicknameDuplicateException;
 import com.blog.domain.user.exception.UserNotFoundException;
 import com.blog.global.common.auth.MemberContext;
 import com.blog.global.common.auth.TokenMemberInfo;
+import com.blog.global.common.exception.BadRequestException;
 import jakarta.transaction.Transactional;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -96,6 +97,10 @@ public class UserService {
     TokenMemberInfo member = MemberContext.getMember();
     User user = this.findById(member.id());
 
+    if (user.getKakaoId() != null) {
+      throw new BadRequestException("소셜 로그인 유저는 비밀번호를 변경할 수 없습니다.");
+    }
+
     user.setPassword(this.hashPassword(password));
   }
 
@@ -127,3 +132,4 @@ public class UserService {
     this.save(user);
   }
 }
+

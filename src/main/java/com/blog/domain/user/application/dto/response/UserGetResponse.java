@@ -6,7 +6,10 @@ public record UserGetResponse(
     Long id,
     String email,
     String nickname,
-    String profilePicture
+    String profilePicture,
+    String name,
+    String birthDate,
+    String introduction
 ) {
 
   public static UserGetResponse from(User user) {
@@ -14,7 +17,10 @@ public record UserGetResponse(
         user.getId(),
         user.getEmail(),
         user.getNickname(),
-        user.getProfilePicture()
+        user.getProfilePicture(),
+        user.getName(),
+        user.getBirthDate().toString(),
+        user.getIntroduction()
     );
   }
 }

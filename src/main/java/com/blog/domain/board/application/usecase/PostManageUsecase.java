@@ -1,15 +1,9 @@
 package com.blog.domain.board.application.usecase;
 
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.data.domain.Page;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.blog.domain.board.application.dto.PostCreateRequest;
 import com.blog.domain.board.application.dto.PostReadAllResponse;
 import com.blog.domain.board.application.dto.PostReadResponse;
+import com.blog.domain.board.application.dto.PostSummaryResponse;
 import com.blog.domain.board.application.dto.PostUpdateRequest;
 import com.blog.domain.board.domain.entity.Content;
 import com.blog.domain.board.domain.entity.Post;
@@ -26,8 +20,12 @@ import com.blog.domain.comment.domain.service.CommentDeleteService;
 import com.blog.domain.comment.domain.service.CommentGetService;
 import com.blog.domain.user.domain.entity.User;
 import com.blog.domain.user.domain.service.UserGetService;
-
+import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,16 +73,12 @@ public class PostManageUsecase {
 
 	@Transactional(readOnly = true)
 	public PostReadAllResponse readAllPost(Long userId, int size, int page) {
-		User user = userGetService.find(userId);
 		Page<Post> postPage = postGetService.findAll(size, page);
 		List<Post> posts = postPage.getContent();
 
-		List<PostReadResponse> dtos = posts.stream()
-			.map(post -> {
-				List<Content> contents = contentGetService.findAll(post);
-				List<Comment> comments = commentGetService.findALlByPost(post);
-				return PostReadResponse.toResponse(post, user, contents, comments);
-			}).toList();
+		List<PostSummaryResponse> dtos = posts.stream()
+				.map(PostSummaryResponse::from)
+				.toList();
 
 		return PostReadAllResponse.toResponse(dtos, postPage.getTotalPages());
 	}
@@ -94,12 +88,9 @@ public class PostManageUsecase {
 		Page<Post> postPage = postGetService.findAll(size, page);
 		List<Post> posts = postPage.getContent();
 
-		List<PostReadResponse> dtos = posts.stream()
-			.map(post -> {
-				List<Content> contents = contentGetService.findAll(post);
-				List<Comment> comments = commentGetService.findALlByPost(post);
-				return PostReadResponse.toResponse(post, null, contents, comments);
-			}).toList();
+		List<PostSummaryResponse> dtos = posts.stream()
+				.map(PostSummaryResponse::from)
+				.toList();
 
 		return PostReadAllResponse.toResponse(dtos, postPage.getTotalPages());
 	}
@@ -129,3 +120,4 @@ public class PostManageUsecase {
 		postDeleteService.delete(post);
 	}
 }
+
