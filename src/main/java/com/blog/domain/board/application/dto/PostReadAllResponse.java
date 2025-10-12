@@ -6,13 +6,14 @@ import lombok.Builder;
 
 @Builder
 public record PostReadAllResponse(
-	List<PostReadResponse> post,
-	long pageMax
+		List<PostSummaryResponse> posts,
+		long pageMax
 ) {
-	public static PostReadAllResponse toResponse(List<PostReadResponse> postDtos, int pageSize) {
+	public static PostReadAllResponse toResponse(List<PostSummaryResponse> postDtos, int pageSize) {
 		return PostReadAllResponse.builder()
-			.post(postDtos)
-			.pageMax(pageSize)
-			.build();
+				.posts(postDtos)
+				.pageMax(pageSize)
+				.build();
 	}
 }
+
