@@ -24,7 +24,7 @@ public class PostGetService {
 	}
 
 	public Page<Post> findAll(int size, int page) {
-		Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+		Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 		return postRepository.findAll(pageable);
 	}
 }
