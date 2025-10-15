@@ -43,12 +43,15 @@ public class PostManageUsecase {
 	private final ContentDeleteService contentDeleteService;
 
 	@Transactional
-	public void createPost(Long userId, PostCreateRequest dto) {
+	public Post createPost(Long userId, PostCreateRequest dto) {
 		User user = userGetService.find(userId);
-		Post post = Post.CreatePost(dto.title(), user);
 
-		contentCreateService.create(dto.contents(), post);
+		// ❗️ 변경된 CreatePost 메서드를 호출하여 Post와 Content를 한번에 생성합니다.
+		Post post = Post.CreatePost(dto.title(), user, dto.contents());
+
+		// ❗️ 이제 Post만 저장하면 Content도 함께 저장됩니다.
 		postSaveService.save(post);
+		return post;
 	}
 
 	@Transactional(readOnly = true)
@@ -73,11 +76,12 @@ public class PostManageUsecase {
 
 	@Transactional(readOnly = true)
 	public PostReadAllResponse readAllPost(Long userId, int size, int page) {
+		User user = userGetService.find(userId);
 		Page<Post> postPage = postGetService.findAll(size, page);
 		List<Post> posts = postPage.getContent();
 
 		List<PostSummaryResponse> dtos = posts.stream()
-				.map(PostSummaryResponse::from)
+				.map(post -> PostSummaryResponse.toResponse(post, user, (long) post.getComments().size()))
 				.toList();
 
 		return PostReadAllResponse.toResponse(dtos, postPage.getTotalPages());
@@ -89,7 +93,7 @@ public class PostManageUsecase {
 		List<Post> posts = postPage.getContent();
 
 		List<PostSummaryResponse> dtos = posts.stream()
-				.map(PostSummaryResponse::from)
+				.map(post -> PostSummaryResponse.toResponse(post, null, (long) post.getComments().size()))
 				.toList();
 
 		return PostReadAllResponse.toResponse(dtos, postPage.getTotalPages());
@@ -115,8 +119,6 @@ public class PostManageUsecase {
 
 		postValidateService.certificate(post, user);
 
-		contentDeleteService.deleteAllByPost(post);
-		commentDeleteService.deleteAll(post);
 		postDeleteService.delete(post);
 	}
 }
