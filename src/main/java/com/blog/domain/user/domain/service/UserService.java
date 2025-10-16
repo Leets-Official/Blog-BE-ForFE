@@ -112,24 +112,42 @@ public class UserService {
 
   @Transactional
   public void updateUser(UserPatchRequest userPatchRequest) {
-    boolean isEmailDuplicate = this.checkEmailDuplicate(userPatchRequest.email());
-    if (isEmailDuplicate) {
-      throw new EmailDuplicateException();
-    }
-
-    boolean isNicknameDuplicate = this.checkNicknameDuplicate(userPatchRequest.nickname());
-    if (isNicknameDuplicate) {
-      throw new NicknameDuplicateException();
-    }
-
     TokenMemberInfo member = MemberContext.getMember();
     User user = this.findById(member.id());
 
-    String hashedPassword = this.hashPassword(userPatchRequest.password());
+    // 이메일 중복 체크 (본인 이메일이 아닌 경우만)
+    if (!user.getEmail().equals(userPatchRequest.email())) {
+      boolean isEmailDuplicate = this.checkEmailDuplicate(userPatchRequest.email());
+      if (isEmailDuplicate) {
+        throw new EmailDuplicateException();
+      }
+    }
+
+    // 닉네임 중복 체크 (본인 닉네임이 아닌 경우만)
+    if (!user.getNickname().equals(userPatchRequest.nickname())) {
+      boolean isNicknameDuplicate = this.checkNicknameDuplicate(userPatchRequest.nickname());
+      if (isNicknameDuplicate) {
+        throw new NicknameDuplicateException();
+      }
+    }
+
+    // 비밀번호 처리: OAuth 사용자 체크
+    String hashedPassword;
+    if (user.getKakaoId() != null) {
+      // OAuth 사용자인 경우
+      if (userPatchRequest.password() != null && !userPatchRequest.password().isEmpty()) {
+        throw new BadRequestException("소셜 로그인 유저는 비밀번호를 변경할 수 없습니다.");
+      }
+      hashedPassword = user.getPassword(); // 기존 비밀번호 유지
+    } else {
+      // 일반 사용자인 경우
+      if (userPatchRequest.password() == null || userPatchRequest.password().isEmpty()) {
+        throw new BadRequestException("일반 로그인 유저는 비밀번호가 필수입니다.");
+      }
+      hashedPassword = this.hashPassword(userPatchRequest.password());
+    }
 
     user.updateUserInfoFrom(userPatchRequest, hashedPassword);
-
     this.save(user);
   }
 }
-
