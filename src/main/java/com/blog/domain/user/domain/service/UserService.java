@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
   private final UserRepository userRepository;
-
   private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
   public Optional<User> checkLoginAvailable(String email, String password) {
@@ -131,23 +130,10 @@ public class UserService {
       }
     }
 
-    // 비밀번호 처리: OAuth 사용자 체크
-    String hashedPassword;
-    if (user.getKakaoId() != null) {
-      // OAuth 사용자인 경우
-      if (userPatchRequest.password() != null && !userPatchRequest.password().isEmpty()) {
-        throw new BadRequestException("소셜 로그인 유저는 비밀번호를 변경할 수 없습니다.");
-      }
-      hashedPassword = user.getPassword(); // 기존 비밀번호 유지
-    } else {
-      // 일반 사용자인 경우
-      if (userPatchRequest.password() == null || userPatchRequest.password().isEmpty()) {
-        throw new BadRequestException("일반 로그인 유저는 비밀번호가 필수입니다.");
-      }
-      hashedPassword = this.hashPassword(userPatchRequest.password());
-    }
+    // String hashedPassword = this.hashPassword(userPatchRequest.password());
 
-    user.updateUserInfoFrom(userPatchRequest, hashedPassword);
+    user.updateUserInfoFrom(userPatchRequest);
+
     this.save(user);
   }
 }

@@ -80,13 +80,12 @@ public class User {
             .build();
     }
 
-    public void updateUserInfoFrom(UserPatchRequest userPatchRequest, String encodedPassword) {
+    public void updateUserInfoFrom(UserPatchRequest userPatchRequest) {
         this.nickname = userPatchRequest.nickname();
         this.profilePicture = userPatchRequest.profilePicture();
         this.name = userPatchRequest.name();
         this.introduction = userPatchRequest.introduction();
         this.email = userPatchRequest.email();
         this.birthDate = LocalDate.parse(userPatchRequest.birthDate());
-        this.password = encodedPassword;
     }
 }
