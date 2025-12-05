@@ -33,7 +33,7 @@ public class CorsConfig {
 				"https://seonayoung-7week.d22n5fory5ccqn.amplifyapp.com",
 				"http://localhost:3000",
 				"https://blog.leets.land",
-				"https://chaemin-main.d1m4qmmv68yk0y.amplifyapp.com/blog/",
+				"https://chaemin-main.d1m4qmmv68yk0y.amplifyapp.com",
 				"https://week10.d1yenc36e2pehi.amplifyapp.com",
 				"https://main.d1rq4e5msoe119.amplifyapp.com/",
 				"https://leeyeseo-10week.d6k729hko01va.amplifyapp.com/",
