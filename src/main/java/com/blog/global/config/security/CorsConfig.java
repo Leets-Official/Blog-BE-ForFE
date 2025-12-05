@@ -26,12 +26,20 @@ public class CorsConfig {
 		config.setAllowCredentials(true);
 		//    config.addAllowedOriginPattern(".leets.land");
 
-		appConfigProperties.setCorsDomain(List.of("https://kdh-main.d2snz5jzmbs2zl.amplifyapp.com",
+		appConfigProperties.setCorsDomain(List.of(
+				"https://kdh-main.d2snz5jzmbs2zl.amplifyapp.com",
 				"https://week7-shin-donghyeon.d1z7wqxq02basu.amplifyapp.com/",
 				"https://week7-jcw.d3p6q7thzc3f0z.amplifyapp.com",
 				"https://seonayoung-7week.d22n5fory5ccqn.amplifyapp.com",
 				"http://localhost:3000",
-				"https://blog.leets.land"));
+				"https://blog.leets.land",
+				"https://chaemin-main.d1m4qmmv68yk0y.amplifyapp.com/blog/",
+				"https://week10.d1yenc36e2pehi.amplifyapp.com",
+				"https://main.d1rq4e5msoe119.amplifyapp.com/",
+				"https://leeyeseo-10week.d6k729hko01va.amplifyapp.com/",
+				"https://www.gitlog.store/",
+				"https://seol-week10.d4kokne1n89co.amplifyapp.com/"
+		));
 
 		List<String> corsConfig = this.appConfigProperties.getCorsDomain();
 
